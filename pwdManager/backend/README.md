@@ -35,11 +35,11 @@
 
 * `name` 密码名称
 
-* `uuid` 该密码的uuid**（必须）**
+* `uuid` 该密码的uuid **（必须）**
 
 * `username`  密码对应网站的用户名
 
-* `password`  密码**（必须）**
+* `password`  密码 **（必须）**
 
 * `description`  对密码的描述
 
