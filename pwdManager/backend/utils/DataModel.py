@@ -7,25 +7,15 @@
 #     Pwd: inherit dict, which contains the information of a password
 #     DataBase: defines the passwords database structure
 
-import json
 import shortuuid
 from typing import Iterable, List
 
-class Jsonfier(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Pwd):
-            return obj.dict
-        elif isinstance(obj, PwdCollection):
-            infoDict = obj.detailDict
-            return infoDict
-        elif isinstance(obj, DataBase):
-            infoDict = obj.__dict__
-            return infoDict
-        return json.JSONEncoder.default(self, obj)
+DEFAULT_NAME = 'default'
 
 class Pwd:
     acceptedKeys = [
         'name', 
+        'uuid',
         'username',
         'password',
         'description',
@@ -38,13 +28,32 @@ class Pwd:
         'autoComplete', # need the auto complete in browser:  Bool
         'matchRules',   # match url rules in browser:  List[regex](maxlength: 10)
     ]
-    def __init__(self, name:str, password:str, **kwargs):
+    def __init__(self, password:str, name:str=DEFAULT_NAME, **kwargs):
         '''
         contains the password infomations
+
+        :param name: the name of the password(nessessary)
+        :param password: the password(nessessary)
+        :param kwargs: the other infomations(see acceptedKeys)
+
+        acceptedKeys:
+        * name 
+        * username
+        * uuid
+        * password
+        * description
+        * url
+        * updateTime:    the time of lastest update:  yyyy-mm-dd
+        * createTime:    the time of creation of the password:  yyyy-mm-dd
+        * updateHistory: update history of password:  List(maxlength: 10)
+        * autoUpdate:    need a update reminder:  Bool
+        * updateDate:    time of reminding update the password:  yyyy-mm-dd
+        * autoComplete:  need the auto complete in browser:  Bool
+        * matchRules:    match url rules in browser:  List[regex](maxlength: 10)
         '''
         self.name = name
         self.password = password
-        self.uuid = shortuuid.uuid()
+        self.uuid = kwargs.get('uuid', shortuuid.uuid())
         # validate the kwargs
         for key in kwargs:
             if key not in self.acceptedKeys:
@@ -63,9 +72,9 @@ class Pwd:
 
 
 class PwdCollection:
-    def __init__(self, name:str='default', pwdList:Iterable[Pwd] = None):
+    def __init__(self, name:str=DEFAULT_NAME, pwdList:Iterable[Pwd] = None, uuid:str=None):
         self._name = name
-        self._uuid = shortuuid.uuid()
+        self._uuid = uuid if uuid else shortuuid.uuid()
         self._pwdDict = {}
         # validation
         for pwd in pwdList:
@@ -120,8 +129,8 @@ class PwdCollection:
 
 class DataBase:
     def __init__(self, pwdCollectionList:List[PwdCollection] , **kwargs):
-        self.name = kwargs.get('name', 'default')
-        self.uuid = shortuuid.uuid()
+        self.name = kwargs.get('name', DEFAULT_NAME)
+        self.uuid = kwargs.get('uuid', shortuuid.uuid())
         self.pwdCollectionIdList = [collection.uuid for collection in pwdCollectionList]
         self.pwdCollectionDict = {}
         for collection in pwdCollectionList:
@@ -145,5 +154,3 @@ if __name__ == '__main__':
     testpwd_collection = PwdCollection('test', testpwd_list)
     testCollection = PwdCollection('test2', testpwd_list)
     testDatabase = DataBase([testpwd_collection, testCollection], name='test')
-    dbjson = json.dumps(testDatabase, cls=Jsonfier)
-    print(dbjson)
