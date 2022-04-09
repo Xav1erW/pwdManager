@@ -132,9 +132,9 @@ class DataBase:
         self.name = kwargs.get('name', DEFAULT_NAME)
         self.uuid = kwargs.get('uuid', shortuuid.uuid())
         self.pwdCollectionIdList = [collection.uuid for collection in pwdCollectionList]
-        self.pwdCollectionDict = {}
-        for collection in pwdCollectionList:
-            self.pwdCollectionDict[collection.uuid] = collection
+        self.pwdCollectionDict = {collection.uuid: collection for collection in pwdCollectionList}
+        # for collection in pwdCollectionList:
+        #     self.pwdCollectionDict[collection.uuid] = collection
     
     def __str__(self):
         return str([str(self.pwdCollectionDict[id]) for id in self.pwdCollectionIdList])

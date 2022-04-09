@@ -24,21 +24,14 @@ def parseDataBase(obj):
             collectionUuid = obj['uuid']
             pwdIdList = obj['idList']
             pwdsDict = obj['pwdDict']
-            pwdList = [None]*len(pwdIdList)
-            for index, pwdId in enumerate(pwdIdList):
-                pwdObj = pwdsDict[pwdId]
-                pwdList[index] = Pwd(**pwdObj)
+            pwdList = [Pwd(**pwdsDict[pwdId]) for pwdId in pwdIdList]
             return PwdCollection(collectionName, pwdList, uuid=collectionUuid)
         
         dbName  = obj['name']
         dbUuid = obj['uuid']
         collectionsIdList = obj['pwdCollectionIdList']
         collectionsDict = obj['pwdCollectionDict']
-        collectionList = [None]*len(collectionsIdList)
-        for index, collectionId in enumerate(collectionsIdList):
-            collectionObj = collectionsDict[collectionId]
-            collection = parseCollection(collectionObj)
-            collectionList[index] = collection
+        collectionList = [parseCollection(collectionsDict[collectionId]) for collectionId in collectionsIdList]
         return DataBase(collectionList, name=dbName, uuid=dbUuid)
 
 def fromJson(dbJson):
