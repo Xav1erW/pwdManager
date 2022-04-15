@@ -1,6 +1,5 @@
 from DataModel import *
 import json
-import cython
 class Jsonfier(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Pwd):
@@ -8,7 +7,7 @@ class Jsonfier(json.JSONEncoder):
         elif isinstance(obj, PwdCollection):
             infoDict = obj.detailDict
             return infoDict
-        elif isinstance(obj, DataBase):
+        elif isinstance(obj, PwdDataBase):
             infoDict = obj.__dict__
             return infoDict
         return json.JSONEncoder.default(self, obj)
@@ -32,7 +31,7 @@ def parseDataBase(obj):
         collectionsIdList = obj['pwdCollectionIdList']
         collectionsDict = obj['pwdCollectionDict']
         collectionList = [parseCollection(collectionsDict[collectionId]) for collectionId in collectionsIdList]
-        return DataBase(collectionList, name=dbName, uuid=dbUuid)
+        return PwdDataBase(collectionList, name=dbName, uuid=dbUuid)
 
 def fromJson(dbJson):
     jsonDict = json.loads(dbJson)

@@ -43,8 +43,8 @@ class Pwd:
         * password
         * description
         * url
-        * updateTime:    the time of lastest update:  yyyy-mm-dd
-        * createTime:    the time of creation of the password:  yyyy-mm-dd
+        * updateTime:    the time of lastest update:  timestamp
+        * createTime:    the time of creation of the password:  timestamp
         * updateHistory: update history of password:  List(maxlength: 10)
         * autoUpdate:    need a update reminder:  Bool
         * updateDate:    time of reminding update the password:  yyyy-mm-dd
@@ -57,7 +57,7 @@ class Pwd:
         # validate the kwargs
         for key in kwargs:
             if key not in self.acceptedKeys:
-                raise KeyError('key: ' + key + ' is not accepted')
+                raise KeyError(f'key: {key} is not accepted')
         self.__dict__.update(kwargs)
     
     def __str__(self):
@@ -91,6 +91,9 @@ class PwdCollection:
     
     def __str__(self):
         return str(self.detailDict)
+
+    def __getitem__(self, key):
+        return self._pwdDict.get(key, None)
 
     @property
     def name(self):
@@ -127,20 +130,34 @@ class PwdCollection:
         '''
         return self._idList
 
-class DataBase:
+class PwdDataBase:
     def __init__(self, pwdCollectionList:List[PwdCollection] , **kwargs):
         self.name = kwargs.get('name', DEFAULT_NAME)
         self.uuid = kwargs.get('uuid', shortuuid.uuid())
-        self.pwdCollectionIdList = [collection.uuid for collection in pwdCollectionList]
-        self.pwdCollectionDict = {collection.uuid: collection for collection in pwdCollectionList}
+        self._pwdCollectionIdList = [collection.uuid for collection in pwdCollectionList]
+        self._pwdCollectionDict = {collection.uuid: collection for collection in pwdCollectionList}
         # for collection in pwdCollectionList:
         #     self.pwdCollectionDict[collection.uuid] = collection
     
+    @property
+    def idList(self):
+        '''
+        the id list of the database(store the sequence infomation)
+        '''
+        return self._pwdCollectionIdList
+
+    @property
+    def collectionDict(self):
+        '''
+        the dict of the database
+        '''
+        return self._pwdCollectionDict
+
     def __str__(self):
-        return str([str(self.pwdCollectionDict[id]) for id in self.pwdCollectionIdList])
+        return str([str(self._pwdCollectionDict[id]) for id in self._pwdCollectionIdList])
 
     def __getitem__(self, key):
-        return self.pwdCollectionDict.get(key, None)
+        return self._pwdCollectionDict.get(key, None)
     
 
 if __name__ == '__main__':
