@@ -73,9 +73,9 @@ class Pwd:
 
 class PwdCollection:
     def __init__(self, name:str=DEFAULT_NAME, pwdList:Iterable[Pwd] = None, uuid:str=None):
-        self._name = name
-        self._uuid = uuid if uuid else shortuuid.uuid()
-        self._pwdDict = {}
+        self.name = name
+        self.uuid = uuid if uuid else shortuuid.uuid()
+        self.pwdDict = {}
         # validation
         for pwd in pwdList:
             if(isinstance(pwd, Pwd)):
@@ -85,57 +85,30 @@ class PwdCollection:
         
         # generate dict and id list(store the sequence)
         if(pwdList is not None):
-            self._idList = [pwd.uuid for pwd in pwdList]
-            self._pwdDict = {pwd.uuid: pwd for pwd in pwdList}
+            self.idList = [pwd.uuid for pwd in pwdList]
+            self.pwdDict = {pwd.uuid: pwd for pwd in pwdList}
         
     
     def __str__(self):
         return str(self.detailDict)
 
     def __getitem__(self, key):
-        return self._pwdDict.get(key, None)
-
-    @property
-    def name(self):
-        '''
-        the name of the collection
-        '''
-        return self._name
-    
-    @property
-    def uuid(self):
-        '''
-        the uuid of the collection
-        '''
-        return self._uuid
-
-    @property
-    def pwdDict(self):
-        '''
-        the dict of the collection
-        '''
-        return self._pwdDict
+        return self.pwdDict.get(key, None)
 
     @property
     def detailDict(self):
         '''
         the detail information dict of the collection(with name, uuid, etc.)
         '''
-        return {'name': self._name, 'uuid': self._uuid, 'pwdDict': self._pwdDict, 'idList': self._idList}
+        return {'name': self.name, 'uuid': self.uuid, 'pwdDict': self.pwdDict, 'idList': self.idList}
 
-    @property
-    def idList(self):
-        '''
-        the id list of the collection(store the sequence infomation)
-        '''
-        return self._idList
 
 class PwdDataBase:
     def __init__(self, pwdCollectionList:List[PwdCollection] , **kwargs):
         self.name = kwargs.get('name', DEFAULT_NAME)
         self.uuid = kwargs.get('uuid', shortuuid.uuid())
-        self._pwdCollectionIdList = [collection.uuid for collection in pwdCollectionList]
-        self._pwdCollectionDict = {collection.uuid: collection for collection in pwdCollectionList}
+        self.pwdCollectionIdList = [collection.uuid for collection in pwdCollectionList]
+        self.pwdCollectionDict = {collection.uuid: collection for collection in pwdCollectionList}
         # for collection in pwdCollectionList:
         #     self.pwdCollectionDict[collection.uuid] = collection
     
@@ -144,20 +117,27 @@ class PwdDataBase:
         '''
         the id list of the database(store the sequence infomation)
         '''
-        return self._pwdCollectionIdList
+        return self.pwdCollectionIdList
 
     @property
     def collectionDict(self):
         '''
         the dict of the database
         '''
-        return self._pwdCollectionDict
+        return self.pwdCollectionDict
+
+    @property
+    def detailDict(self):
+        '''
+        the detail information dict of the collection(with name, uuid, etc.)
+        '''
+        return {'name': self.name, 'uuid': self.uuid, 'collectionDict': self.pwdCollectionDict, 'idList': self.pwdCollectionIdList}
 
     def __str__(self):
-        return str([str(self._pwdCollectionDict[id]) for id in self._pwdCollectionIdList])
+        return str([str(self.pwdCollectionDict[id]) for id in self.pwdCollectionIdList])
 
     def __getitem__(self, key):
-        return self._pwdCollectionDict.get(key, None)
+        return self.pwdCollectionDict.get(key, None)
     
 
 if __name__ == '__main__':
@@ -170,4 +150,4 @@ if __name__ == '__main__':
     testpwd_list = [testpwd1, testpwd2, testpwd3, testpwd4]
     testpwd_collection = PwdCollection('test', testpwd_list)
     testCollection = PwdCollection('test2', testpwd_list)
-    testDatabase = DataBase([testpwd_collection, testCollection], name='test')
+    testDatabase = PwdDataBase([testpwd_collection, testCollection], name='test')

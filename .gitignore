@@ -1,5 +1,5 @@
 /pwdManager/frontend/node_modules
 /pwdManager/gui
 /temp
-*_test.py
+*_test*
 __pycache__
