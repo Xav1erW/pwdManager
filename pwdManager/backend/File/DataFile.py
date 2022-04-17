@@ -7,7 +7,7 @@
 from io import BytesIO
 from File.DataModel import *
 from File.JsonOperation import *
-from File.crypro import *
+from File.Crypro import *
 from hashlib import sha256
 import os
 import json
@@ -16,10 +16,10 @@ import struct
 class DataFile:
     HEAD = {
         'version': 0x01,
-        'contentOffset': 0x0000005D, 
+        'contentOffset': 0x0000003D, 
         'collectionCount': 0x0000,
         'uuid': '',     # 22 bytes
-        'hash': ''      # 64 bytes
+        'hash': ''      # 32 bytes
     }
     def __init__(self, filePath:str, dataObj:PwdDataBase, update:bool=False):
         """
@@ -42,6 +42,7 @@ class DataFile:
         load the data from the file
 
         :param filePath: the path of the password data file
+        :param key: the key to decrypt the file
         """
         if(os.path.exists(filePath)):
             with open(filePath, 'rb') as f:
@@ -66,13 +67,13 @@ class DataFile:
         # contentOffset: 4 bytes
         # collectionCount: 2 bytes
         # uuid: 22 bytes
-        # hash: 64 bytes
-        rawHead = struct.unpack('=BIH22s64s', file.read(offset))
+        # hash: 32 bytes
+        rawHead = struct.unpack('=BIH22s32s', file.read(offset))
         head['version'] = rawHead[0]
         head['contentOffset'] = rawHead[1]
         head['collectionCount'] = rawHead[2]
         head['uuid'] = rawHead[3].decode('utf-8')
-        head['hash'] = rawHead[4].decode('utf-8')
+        head['hash'] = rawHead[4]
 
         # ============ read the content ===========
 
@@ -84,7 +85,7 @@ class DataFile:
             # file.seek(offset+1)
             contentBytes = file.read()
             hash = sha256(contentBytes)
-            if(hash.hexdigest() != head['hash']):
+            if(hash.digest() != head['hash']):
                 raise ValueError('the file hash is not valid, it may be damaged')
 
         # ------ decryption ------
@@ -101,6 +102,8 @@ class DataFile:
         save the data to the file
 
         :param key: the key to encrypt the file
+        :param path: the path to save the file
+        :param update: if the data file is to update or to create a new one
         """
         if(path):
             if(os.path.exists(self.filePath) and not update):
@@ -119,7 +122,7 @@ class DataFile:
         content = toJson(self.dataObj)
         contentBytes = encryptJson(content.encode('utf-8'), key, iv)
         # complete the header
-        head['hash'] = sha256(contentBytes).hexdigest()
+        head['hash'] = sha256(contentBytes).digest()
 
         # ------ write the content ------
         
@@ -128,9 +131,9 @@ class DataFile:
         # contentOffset: 4 bytes
         # collectionCount: 2 bytes
         # uuid: 22 bytes
-        # hash: 64 bytes
-        headTuple = (head['version'], head['contentOffset'], head['collectionCount'], head['uuid'].encode('utf-8'), head['hash'].encode('utf-8'))
-        headBytes = struct.pack('=BIH22s64s', *headTuple)
+        # hash: 32 bytes
+        headTuple = (head['version'], head['contentOffset'], head['collectionCount'], head['uuid'].encode('utf-8'), head['hash'])
+        headBytes = struct.pack('=BIH22s32s', *headTuple)
         file.write(headBytes)
         file.write(contentBytes)
         file.close()
