@@ -127,9 +127,12 @@
 }
 ```
 
+## Auth
 
+提供了认证、解码等服务
 
+* jwtAuth: jwt令牌校验代码
 
+* RSADecoder: rsa解码
 
-
-
+* SessionPool: 存储可信会话列表
