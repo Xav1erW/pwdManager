@@ -1,0 +1,1 @@
+from [flask-pydantic](https://github.com/bauerji/flask-pydantic) and modified to suit the project
