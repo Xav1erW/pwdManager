@@ -13,7 +13,11 @@ SECRET_KEY = config['jwt']['secret_key']
 
 logger = logging.getLogger('Auth')
 
-def tokenGen(sessionId:str):
+def tokenGen(sessionId:str)->str:
+    """
+    generate token for the session with id
+    :param sessionId: session id
+    """
     payload = {
         'exp': datetime.datetime.utcnow() + datetime.timedelta(days=30),
         'iat': datetime.datetime.utcnow(),
@@ -25,6 +29,10 @@ def tokenGen(sessionId:str):
 
 # a decorator to check the token from the flask request
 def tokenCheck(pool:SessionPool):
+    """
+    provide the trusted session pool to check the token
+    :param pool: trusted session pool
+    """
     def jwtAuth(func:Callable, )->Callable:
         @wraps(func)
         def wrapper(*args, **kwargs):

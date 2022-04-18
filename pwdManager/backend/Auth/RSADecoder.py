@@ -1,3 +1,4 @@
+from typing import Callable
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
 from flask import request
@@ -15,7 +16,10 @@ PUBLIC_KEY = RSA.import_key(config['RSA']['public'])
 logger = logging.getLogger('Auth')
 logger.setLevel(logging.DEBUG)
 
-def rsaDecoder(func):
+def rsaDecoder(func:Callable)->Callable:
+    """
+    decorator that decode the request body with RSA private key(store in config.json)
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
