@@ -1,3 +1,9 @@
+# author: Xav1erW
+# create date: 2022-4-16
+# version: 1.0
+# description:
+#   a decorator to validate the token from the flask request
+
 from typing import Callable
 import jwt
 import json

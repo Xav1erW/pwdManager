@@ -1,3 +1,8 @@
+# author: Xav1erW
+# create date: 2022-4-16
+# version: 1.0
+# description:
+#   offer rsa encrypt and decrypt
 from typing import Callable
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
@@ -11,7 +16,6 @@ with open('config.json', 'r') as f:
     config = json.load(f)
 
 PRIVATE_KEY = RSA.import_key(config['RSA']['private'])
-PUBLIC_KEY = RSA.import_key(config['RSA']['public'])
 
 logger = logging.getLogger('Auth')
 logger.setLevel(logging.DEBUG)
@@ -33,3 +37,11 @@ def rsaDecoder(func:Callable)->Callable:
             logger.error(e)
             return str(e), 401
     return wrapper
+
+def encodeWithRSA(data:bytes, publicKey:str)->str:
+    """
+    encode the data with RSA public key(get from session pool)
+    """
+    cipher = PKCS1_v1_5.new(publicKey)
+    dataEncrypted = cipher.encrypt(data)
+    return base64.b64encode(dataEncrypted).decode()

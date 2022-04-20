@@ -42,7 +42,7 @@ sessionPool = SessionPool()
 @validate()
 def genToken(query:TokenModel):
     # generate jwt and add uuid tu session pool
-    sessionPool.add(query.uuid)
+    sessionPool.add(query.uuid, query.publicKey)
     return {'token': tokenGen(query.uuid)}
 
 @app.post('/api/post')
@@ -76,7 +76,7 @@ sessionPool = SessionPool()
 @app.get('/api/genToken')
 @validate()
 def genToken(query:TokenModel):
-    sessionPool.add(query.uuid)
+    sessionPool.add(query.uuid, query.publicKey)
     return {'token': tokenGen(query.uuid)}
 
 
