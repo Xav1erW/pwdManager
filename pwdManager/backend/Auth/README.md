@@ -17,8 +17,7 @@
 
 ### jwtAuth
 
-服务器与页面监理会话后，会生成一个jwt令牌发送给前端，前端之后每次请求都会携带该令牌。该部分有装饰器用来验证令牌，需要提供可信的sessionpool
-
+服务器与页面监理会话后，会生成一个jwt令牌发送给前端，前端之后每次请求都会在请求头携带该令牌。该部分使用装饰器用来验证令牌
 ```python
 from Auth.jwtAuth import useJWT, tokenGen
 from flask_pydantic import validate
