@@ -15,19 +15,12 @@
 
 模块基本都使用decorator的形式使用
 
-### SessionPool
-
-每次服务器连接到一个页面时，如果页面输入密码正确，都会将页面的uuid存入SessionPool。
-
-SessionPool 为dict形式，`key` 为页面的uuid， `value` 包含session的信息，主要有其rsa公钥，便于加密通信
-
 ### jwtAuth
 
 服务器与页面监理会话后，会生成一个jwt令牌发送给前端，前端之后每次请求都会携带该令牌。该部分有装饰器用来验证令牌，需要提供可信的sessionpool
 
 ```python
-from Auth.jwtAuth import tokenCheck, tokenGen
-from Auth.SessionPool import SessionPool
+from Auth.jwtAuth import useJWT, tokenGen
 from flask_pydantic import validate
 
 class PostModel(BaseModel):
@@ -37,22 +30,23 @@ class PostModel(BaseModel):
 class TokenModel(BaseModel):
     uuid:str
 
-sessionPool = SessionPool()
 @app.get('/api/genToken')
 @validate()
 def genToken(query:TokenModel):
     # generate jwt and add uuid tu session pool
-    sessionPool.add(query.uuid, query.publicKey)
+    # use session in flask to store state
+    session['id'] = query.uuid
+    session['authorized'] = True
     return {'token': tokenGen(query.uuid)}
 
 @app.post('/api/post')
-@tokenCheck(sessionPool)        # ATTENTION! used before validate parameters
+@useJWT        # ATTENTION! used before validate parameters
 @validate()
 def post(body: PostModel):
     return {'name': body.name}
 ```
 
-### RSADecoder
+### RSA
 
 数据都是rsa加密方式发送，因此前端post请求携带信息需要解密，利用该文件提供的装饰器进行。
 
@@ -66,22 +60,21 @@ def post(body: PostModel):
 3. 验证数据
 
 ```python
-from Auth.SessionPool import SessionPool
-from Auth.jwtAuth import tokenCheck, tokenGen
+from Auth.jwtAuth import useJWT, tokenGen
 from Lib.flask_pydantic import validate
-from Auth.RSADecoder import rsaDecoder
+from Auth.RSA import rsaDecoder
 
-sessionPool = SessionPool()
 
 @app.get('/api/genToken')
 @validate()
 def genToken(query:TokenModel):
-    sessionPool.add(query.uuid, query.publicKey)
+    session['id'] = query.uuid
+    session['authorized'] = True
     return {'token': tokenGen(query.uuid)}
 
 
 @app.post('/api/post')
-@tokenCheck(sessionPool)
+@useJWT
 @rsaDecoder
 @validate()
 def post(body: PostModel):
@@ -90,7 +83,7 @@ def post(body: PostModel):
 
 @app.get('/api/delToken')
 @validate()
-def delToken(query: TokenModel):
-    sessionPool.remove(query.uuid)
+def delToken():
+    session['authorized'] = False
     return {'status': 'ok'}
 ```

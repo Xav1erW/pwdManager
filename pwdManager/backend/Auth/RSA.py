@@ -6,7 +6,7 @@
 from typing import Callable
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
-from flask import request
+from flask import request, session
 import logging 
 import json
 import base64
@@ -38,10 +38,11 @@ def rsaDecoder(func:Callable)->Callable:
             return str(e), 401
     return wrapper
 
-def encodeWithRSA(data:bytes, publicKey:str)->str:
+def encodeWithRSA(data:bytes)->str:
     """
     encode the data with RSA public key(get from session pool)
     """
+    publicKey = session['publicKey']
     cipher = PKCS1_v1_5.new(publicKey)
     dataEncrypted = cipher.encrypt(data)
     return base64.b64encode(dataEncrypted).decode()
