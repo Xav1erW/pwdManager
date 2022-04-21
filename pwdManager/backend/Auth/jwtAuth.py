@@ -37,6 +37,7 @@ def useJWT(func:Callable, )->Callable:
     @wraps(func)
     def wrapper(*args, **kwargs):
         token = request.headers.get('Authorization')
+        dbUUID = request.headers.get('dbUUID')
         logger.debug('token: ', token)
         if token is None:
             print('token is None')
@@ -45,7 +46,7 @@ def useJWT(func:Callable, )->Callable:
             payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
             sessionID = payload['jti']
             assert( session['id'] == sessionID )
-            if not session['authorized']:
+            if not session['authorized'].get(dbUUID, False):
                 return 'session not authorized', 401
         except jwt.ExpiredSignatureError:
             return 'token expired', 401
