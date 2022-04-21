@@ -41,17 +41,17 @@ def useJWT(func:Callable, )->Callable:
         logger.debug('token: ', token)
         if token is None:
             print('token is None')
-            return 'no token', 401
+            return {'msg':'no token'}, 401
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
             sessionID = payload['jti']
             assert( session['id'] == sessionID )
             if not session['authorized'].get(dbUUID, False):
-                return 'session not authorized', 401
+                return {'msg':'session not authorized'}, 401
         except jwt.ExpiredSignatureError:
-            return 'token expired', 401
+            return {'msg':'token expired'}, 401
         except jwt.InvalidTokenError:
-            return 'invalid token', 401
+            return {'msg':'invalid token'}, 401
         ret = func(*args, **kwargs)
         return ret
     return wrapper
