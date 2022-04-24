@@ -52,6 +52,6 @@ def test_jwt(sessionId):
     print(k)
 
 if __name__ == '__main__':
-    test_data_init()
-    test_save()
+    testdb, jsonStr = test_data_init()
+    test_save(testdb)
     test_jwt('ntdeOMFNHFl1JzTm6iNwlE')
