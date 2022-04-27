@@ -1,12 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import axios, { AxiosResponse } from 'axios'
+import { encrypt } from 'src/utils/rsa'
 import Dropdown from './Dropdown';
+import { AuthContext } from 'src/App';
 import styles from './styles/Login.module.scss';
 
+interface Auth {
+    jwt: string
+    publicKey: string
+}
+
+interface authContextType {
+    uuid: string
+    privateKey: string
+    auth: Auth
+}
+
 export default function Login(props: any): JSX.Element {
+    const authContext: authContextType = useContext(AuthContext)
+    const { jwt } = authContext.auth
     const fetcher = axios.create({
         baseURL: "http://127.0.0.1:4523/mock/862776/",
-        timeout: 1000
+        timeout: 1000,
+        headers: {
+            Authentication: jwt
+        }
     })
     const [files, setFiles] = useState([])
     const [selected, setSelected] = useState("")
@@ -25,18 +43,16 @@ export default function Login(props: any): JSX.Element {
 
     const decript = (): void => {
         if (selected !== "") {
-            const password = passwordInput.current?.value
+            const password = (passwordInput.current as HTMLInputElement).value as string
+            const data = encrypt(password, authContext.privateKey)
             fetcher.post(
-                `/api/verify?uuid=${selected}`,
-                {
-                    data: {
-                        password
-                    }
-                }).then((response: AxiosResponse): void => {
-                    console.log(response.data)
-                }).catch((error: any): void => {
-                    console.log(error)
-                })
+                `/api/verify?uuid=${selected}`, {
+                password: data
+            }).then((response: AxiosResponse): void => {
+                console.log(response.data)
+            }).catch((error: any): void => {
+                console.log(error)
+            })
         }
     }
 
