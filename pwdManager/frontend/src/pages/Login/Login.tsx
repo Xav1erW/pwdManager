@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from 'axios'
 import { encrypt } from 'src/utils/rsa'
 import Dropdown from './Dropdown';
 import { AuthContext } from 'src/App';
+import api from 'src/utils/api';
 import styles from './styles/Login.module.scss';
 
 interface Auth {
@@ -30,10 +31,12 @@ export default function Login(props: any): JSX.Element {
     const [selected, setSelected] = useState("")
     const passwordInput = useRef<HTMLInputElement>(null)
     useEffect((): void => {
-        fetcher.get('/api/fileList').then((response: AxiosResponse): void => {
-            setFiles(response.data.data)
-        }).catch((error: any): void => {
-            console.log(error)
+        const getData = async () => {
+            const data = await api.getFileList()
+            return data
+        }
+        getData().then((data: any) => {
+            setFiles(data.data)
         })
     }, [])
 
@@ -45,14 +48,8 @@ export default function Login(props: any): JSX.Element {
         if (selected !== "") {
             const password = (passwordInput.current as HTMLInputElement).value as string
             const data = encrypt(password, authContext.privateKey)
-            fetcher.post(
-                `/api/verify?uuid=${selected}`, {
-                password: data
-            }).then((response: AxiosResponse): void => {
-                console.log(response.data)
-            }).catch((error: any): void => {
-                console.log(error)
-            })
+            
+            api.Login(selected, data).then((data: any) => { console.log(data) })
         }
     }
 

@@ -1,9 +1,10 @@
-import React, { useEffect, createContext, useState } from 'react'
+import React, { useEffect, createContext, useState, EffectCallback } from 'react'
 import axios from 'axios'
 import { generateKeys } from 'src/utils/rsa'
 import shortUUID from 'short-uuid'
 import Login from './pages/Login/Login'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import api from 'src/utils/api'
 
 const uuid = shortUUID.generate()
 
@@ -19,25 +20,15 @@ export const AuthContext = createContext({
 })
 function App() {
     const [auth, setAuth] = useState({jwt:'', publicKey:''})
-
-    useEffect((): void => {
-        const requester = axios.create({
-            baseURL: 'http://127.0.0.1:4523/mock/862776',
-            timeout: 1000
-        })
-        requester.post('/api/auth', {
-            'session id': uuid,
-            'public key': publicKey
-        }).then((response: any): void => {
-            const jwt:string = response.data.jwt
-            const publicKey:string = response.data["public key"]
-            setAuth({
-                jwt,
-                publicKey
-            })
-            console.log(response.data)
-        }).catch((error: any): void => {
-            console.log(error)
+    
+    useEffect(()=>{
+        const getData = async () => {
+            const data = await api.BeforeLogin(uuid, publicKey)
+            return data
+        }
+        getData().then((data: any) => {
+            setAuth(data)
+            console.log('data', data)
         })
     }, [])
     return (
