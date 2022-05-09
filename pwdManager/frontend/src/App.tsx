@@ -1,8 +1,8 @@
 import React, { useEffect, createContext, useState, EffectCallback } from 'react'
-import axios from 'axios'
 import { generateKeys } from 'src/utils/rsa'
 import shortUUID from 'short-uuid'
 import Login from './pages/Login/Login'
+import Main from './pages/Main/Main'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import api from 'src/utils/api'
 
@@ -20,7 +20,7 @@ export const AuthContext = createContext({
 })
 function App() {
     const [auth, setAuth] = useState({jwt:'', publicKey:''})
-    
+
     useEffect(()=>{
         const getData = async () => {
             const data = await api.BeforeLogin(uuid, publicKey)
@@ -37,6 +37,7 @@ function App() {
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<Login />} />
+                        <Route path="/home" element={<Main />} />
                     </Routes>
                 </BrowserRouter>
             </AuthContext.Provider>
