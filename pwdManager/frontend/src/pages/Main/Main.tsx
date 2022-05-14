@@ -41,6 +41,16 @@ interface pwdDetailsInfo {
 
 interface collectionListTyle extends Array<collectionItemTyle> { }
 interface passwordListTyle extends Array<passwordItemTyle> { }
+
+
+
+function Password(props:pwdInfo|pwdDetailsInfo){
+    return (
+        <div className={styles.password}>password</div>
+    )
+}
+
+
 export default function Main() {
     const [collectionList, setCollectionList] = useState<collectionListTyle>([])
     const [passwordList, setPasswordList] = useState<passwordListTyle>([])
@@ -115,6 +125,7 @@ export default function Main() {
                         </div>
                     ))}
                 </div>:null}
+                {pwdInfo?<Password {...pwdInfo}/>:null}
             </div>
         </div>
     )
