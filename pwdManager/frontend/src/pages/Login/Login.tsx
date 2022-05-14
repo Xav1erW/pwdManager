@@ -1,35 +1,17 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
-import axios, { AxiosResponse } from 'axios'
-import { encrypt } from 'src/utils/rsa'
+import { useNavigate } from 'react-router-dom';
 import Dropdown from './Dropdown';
-import { AuthContext } from 'src/App';
+import { AuthContext, authContextType } from 'src/App';
 import api from 'src/utils/api';
 import styles from './styles/Login.module.scss';
 
-interface Auth {
-    jwt: string
-    publicKey: string
-}
-
-interface authContextType {
-    uuid: string
-    privateKey: string
-    auth: Auth
-}
 
 export default function Login(props: any): JSX.Element {
     const authContext: authContextType = useContext(AuthContext)
-    const { jwt } = authContext.auth
-    const fetcher = axios.create({
-        baseURL: "http://127.0.0.1:4523/mock/862776/",
-        timeout: 1000,
-        headers: {
-            Authentication: jwt
-        }
-    })
     const [files, setFiles] = useState([])
     const [selected, setSelected] = useState("")
     const passwordInput = useRef<HTMLInputElement>(null)
+    const navigate = useNavigate()
     useEffect((): void => {
         const getData = async () => {
             const data = await api.getFileList()
@@ -47,9 +29,13 @@ export default function Login(props: any): JSX.Element {
     const decript = (): void => {
         if (selected !== "") {
             const password = (passwordInput.current as HTMLInputElement).value as string
-            const data = encrypt(password, authContext.privateKey)
+            // const data = encrypt(password, authContext.privateKey)
             
-            api.Login(selected, data).then((data: any) => { console.log(data) })
+            api.Login(selected, password).then((data: any) => { if (data.status === 'success'){
+                const { uuid, name } = data
+                authContext.setDbInfo({ dbUUID: uuid, dbName: name })
+                navigate('/home')
+            } })
         }
     }
 

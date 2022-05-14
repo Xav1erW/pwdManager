@@ -6,6 +6,7 @@ export default function Main() {
     return (
         <div className={styles.mainPage}>
             <Topbar/>
+            
         </div>
     )
 }

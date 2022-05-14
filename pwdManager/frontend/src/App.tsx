@@ -13,13 +13,42 @@ const keys = generateKeys()
 const publicKey = keys.publicKey
 const privateKey = keys.privateKey
 
-export const AuthContext = createContext({
+export interface authContextType {
+    uuid: string
+    privateKey: string
+    auth: {
+        jwt: string
+        publicKey: string
+    }
+    dbInfo: {
+        dbName: string
+        dbUUID: string
+    },
+    setDbInfo: (dbInfo: { dbName: string, dbUUID: string }) => void
+}
+
+const initialContext:authContextType = {
     uuid,
     privateKey,
-    auth:{jwt:'', publicKey:''}
-})
+    auth:{jwt:'', publicKey:''},
+    dbInfo: {
+        dbUUID: '',
+        dbName: '',
+    },
+    setDbInfo: () => {},
+}
+
+export const AuthContext = createContext(initialContext)
+
+interface dbInfoTyle {
+    dbUUID: string,
+    dbName: string,
+}
+
 function App() {
     const [auth, setAuth] = useState({jwt:'', publicKey:''})
+
+    const [dbInfo, setDbInfo] = useState<dbInfoTyle>({dbUUID:'', dbName:''})
 
     useEffect(()=>{
         const getData = async () => {
@@ -33,7 +62,7 @@ function App() {
     }, [])
     return (
         <div>
-            <AuthContext.Provider value={{ uuid, privateKey, auth:auth }}>
+            <AuthContext.Provider value={{ uuid, privateKey, auth:auth, dbInfo: dbInfo, setDbInfo }}>
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<Login />} />

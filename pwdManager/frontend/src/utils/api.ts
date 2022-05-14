@@ -1,9 +1,12 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
+import { encrypt } from "./rsa";
 export class Api {
     authToken: string = "";
     baseUrl: string = "/api/";
     client: AxiosInstance;
+    private privateKey: string = ""
+    private serverPublicKey: string = ""
     constructor(baseUrl?: string) {
         this.client = axios.create({
             baseURL: baseUrl?baseUrl:this.baseUrl,
@@ -38,6 +41,7 @@ export class Api {
         })
         const jwt = response.data['jwt']
         const publicKey = response.data["public key"]
+        this.setServerPublicKey(publicKey)
         return {jwt, publicKey}
     }
 
@@ -47,8 +51,23 @@ export class Api {
     }
 
     async Login(dbUUID: string, password: string):Promise<any> {
-        const response = await this.post(`verify?uuid=${dbUUID}`, {password})
-        return response.data
+        console.log('password', password)
+        console.log('key', this.serverPublicKey)
+        const encryptedPassword = encrypt(password, this.serverPublicKey)
+        const response = await this.post(`verify?uuid=${dbUUID}`, {password: encryptedPassword})
+        if (response.status === 200) {
+            this.authToken = response.data['jwt']
+            return response.data
+        }else{
+            throw new Error(response.data['msg'])
+        }
+    }
+
+    setPrivateKey(privateKey: string) {
+        this.privateKey = privateKey
+    }
+    setServerPublicKey(serverPublicKey: string) {
+        this.serverPublicKey = serverPublicKey
     }
 }
 
