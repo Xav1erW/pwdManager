@@ -44,7 +44,7 @@ interface passwordListTyle extends Array<passwordItemTyle> { }
 
 
 
-function Password(props:pwdInfo|pwdDetailsInfo){
+function Password(props: pwdInfo | pwdDetailsInfo) {
     return (
         <div className={styles.password}>password</div>
     )
@@ -54,32 +54,32 @@ function Password(props:pwdInfo|pwdDetailsInfo){
 export default function Main() {
     const [collectionList, setCollectionList] = useState<collectionListTyle>([])
     const [passwordList, setPasswordList] = useState<passwordListTyle>([])
-    const [pwdInfo, setPwdInfo] = useState<pwdInfo|pwdDetailsInfo>({} as pwdInfo)
+    const [pwdInfo, setPwdInfo] = useState<pwdInfo | pwdDetailsInfo>({} as pwdInfo)
     const [chosenCollection, setChosenCollection] = useState('')
     const [chosenPassword, setChosenPassword] = useState('')
-    classNames.bind(styles)
-    const collectionNavClass = classNames({
+    const cx = classNames.bind(styles)
+    const collectionNavClass = cx({
         nav: true,
         collectionNav: true,
     })
-    const passwordNavClass = classNames({
+    const passwordNavClass = cx({
         nav: true,
         passwordNav: true,
     })
-    const actCollectionItemClass = classNames({
+    const actCollectionItemClass = cx({
         navItem: true,
         activateItem: true,
         collection: true
     })
-    const collectionItemClass = classNames({
+    const collectionItemClass = cx({
         navItem: true,
     })
-    const actPasswordItemClass = classNames({
+    const actPasswordItemClass = cx({
         navItem: true,
         activateItem: true,
         password: true
     })
-    const passwordItemClass = classNames({
+    const passwordItemClass = cx({
         navItem: true,
     })
     useEffect(() => {
@@ -89,7 +89,7 @@ export default function Main() {
     }, [])
 
     const chooseCollection = (collectionUUID: string) => {
-        return ()=>{
+        return () => {
             setChosenCollection(collectionUUID)
             api.getPasswordList(collectionUUID).then(res => {
                 setPasswordList(res.passwordList)
@@ -97,7 +97,7 @@ export default function Main() {
         }
     }
     const choosePassword = (passwordUUID: string) => {
-        return ()=>{
+        return () => {
             setChosenPassword(passwordUUID)
             api.getPasswordInfo(passwordUUID).then(res => {
                 setPwdInfo(res)
@@ -111,21 +111,23 @@ export default function Main() {
                 <div className={collectionNavClass}>
                     {collectionList.map(item =>
                     (
-                        <div className={chosenCollection===item.uuid?actCollectionItemClass:collectionItemClass} key={item.uuid} onClick={chooseCollection(item.uuid)}>
+                        <div className={chosenCollection === item.uuid ? actCollectionItemClass : collectionItemClass} key={item.uuid} onClick={chooseCollection(item.uuid)}>
                             <span>{item.name}</span>
-                            <hr/>
+                            {/* <hr/> */}
                         </div>
                     ))}
                 </div>
-                {passwordList?<div className={passwordNavClass}>
-                    {passwordList.map(item =>(
-                        <div className={chosenPassword===item.uuid?actPasswordItemClass:passwordItemClass} key={item.uuid}>
+                {passwordList.length === 0 ? null : <div className={passwordNavClass}>
+                    {passwordList.map(item => (
+                        <div className={chosenPassword === item.uuid ? actPasswordItemClass : passwordItemClass} key={item.uuid} onClick={choosePassword(item.uuid)}>
                             <span>{item.name}</span>
-                            <hr/>
+                            {/* <hr/> */}
                         </div>
                     ))}
-                </div>:null}
-                {pwdInfo?<Password {...pwdInfo}/>:null}
+                </div>}
+                <div className={styles.contentDisplay}>
+                    {Object.keys(pwdInfo).length === 0 ? null : <Password {...pwdInfo} />}
+                </div>
             </div>
         </div>
     )

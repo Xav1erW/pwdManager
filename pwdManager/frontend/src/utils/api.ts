@@ -129,7 +129,7 @@ export class Api {
     }
 
     async getPasswordInfo(passwordUUID: string, detail: Boolean = false): Promise<pwdResponse | pwdDetailsResponse> {
-        const response = await this.get(`password/info?passwordID=${passwordUUID}&detail=${detail}`)
+        const response = await this.get(`pwd/info?uuid=${passwordUUID}&detail=${detail}`)
         if (detail) {
             if (response.status === 200) {
                 const username = decrypt(response.data.username, this.privateKey)

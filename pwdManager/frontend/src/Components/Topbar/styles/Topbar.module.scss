@@ -1,12 +1,16 @@
 @import 'variables.scss';
 
 .topbar {
+    $paddingTB: 10px;
+    $paddingLR: 20px;
     background: transparent;
     display: flex;
     flex-direction: row;
-    width: calc(100% - var(--padding-left) - var(--padding-right));
-    padding: 10px 20px;
+    width: calc(100% - $paddingLR * 2);
+    padding: $paddingTB $paddingLR;
     min-width: 600px;
+    height: calc($topbar-height - $paddingTB * 2);
+    align-items: center;
 }
 
 .options {
