@@ -4,6 +4,7 @@
     background: $backgroundColor;
     width: 100%;
     min-height: 100vh;
+    min-width: 700px;
 }
 
 .mainContent {
@@ -154,7 +155,7 @@
 
     .title {
         margin-left: 100px;
-        margin-top: 100px;
+        margin-top: 5%;
         input {
             color: $color-black;
             font-size: 23px;
@@ -163,7 +164,21 @@
         }
     }
 
-    .editable:nth-last-child(1)>label{
+    .des>label{
         align-items: flex-start;
+    }
+
+    .btn{
+        display: block;
+        margin: 10px auto;
+        width: 80px;
+        text-align: center;
+        height: 40px;
+        background: $btnColor;
+        border-radius: 5px;
+        color: $color-white;
+        font-size: 15px;
+        line-height: 40px;
+        cursor: pointer;
     }
 }

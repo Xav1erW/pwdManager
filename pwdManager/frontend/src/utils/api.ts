@@ -38,8 +38,10 @@ interface pwdDetailsResponse {
     updateHistory: string[],
     autoComplete: Boolean,
     matchRules: string[], //url list
-
 }
+
+interface pwdUpdateRequest extends pwdResponse {}
+interface pwdUpdateRequestDetail extends pwdDetailsResponse {}
 
 export class Api {
     authToken: string = "";
@@ -169,6 +171,16 @@ export class Api {
             else {
                 throw new Error(response.status)
             }
+        }
+    }
+
+    async savePassword(password: pwdUpdateRequest|pwdUpdateRequestDetail): Promise<any> {
+        const response = await this.client.post('pwd/info', password)
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            throw new Error(response.status.toString())
         }
     }
 

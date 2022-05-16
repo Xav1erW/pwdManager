@@ -52,6 +52,9 @@ function Password(props: {info: pwdInfo | pwdDetailsInfo, setInfo:Function}) {
         const value = e.target.value
         props.setInfo({ ...props.info, [attr]: value })
     }
+    const saveChange = () => {
+        api.savePassword(props.info)
+    }
     return (
         <div className={styles.password}>
             <div className={styles.title}>
@@ -81,13 +84,16 @@ function Password(props: {info: pwdInfo | pwdDetailsInfo, setInfo:Function}) {
                     </div>
                 </label>
             </div>
-            <div className={styles.editable}>
+            <div className={`${styles.editable} ${styles.des}`}>
                 <label>
                     <span>备注</span>
                     <div className={styles.textareBox}>
                         <textarea value={description} name={'description'} onChange={handleAttrChange} />
                     </div>
                 </label>
+            </div>
+            <div className={styles.btns}>
+                <span className={styles.btn} onClick={saveChange}>保存修改</span>
             </div>
         </div>
     )
