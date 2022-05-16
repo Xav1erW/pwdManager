@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import classNames from 'classnames/bind'
 import api from 'src/utils/api'
@@ -44,9 +44,52 @@ interface passwordListTyle extends Array<passwordItemTyle> { }
 
 
 
-function Password(props: pwdInfo | pwdDetailsInfo) {
+function Password(props: {info: pwdInfo | pwdDetailsInfo, setInfo:Function}) {
+    const { title, username, password, url, description } = props.info
+    const [show, setShow] = useState(false)
+    const handleAttrChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const attr = e.target.attributes.getNamedItem('name')!.value
+        const value = e.target.value
+        props.setInfo({ ...props.info, [attr]: value })
+    }
     return (
-        <div className={styles.password}>password</div>
+        <div className={styles.password}>
+            <div className={styles.title}>
+                <input value={title} name={'title'} onChange={handleAttrChange} />
+            </div>
+            <div className={styles.editable}>
+                <label>
+                    <span>用户名</span>
+                    <div className={styles.inputBox}>
+                        <input type={'text'} value={username} name={'username'} onChange={handleAttrChange} />
+                    </div>
+                </label>
+            </div>
+            <div className={styles.editable}>
+                <label>
+                    <span>密码</span>
+                    <div className={styles.inputBox}>
+                        <input type={show ? 'text' : 'password'} value={password} name={'password'} onChange={handleAttrChange} />
+                    </div>
+                </label>
+            </div>
+            <div className={styles.editable}>
+                <label>
+                    <span>url</span>
+                    <div className={styles.inputBox}>
+                        <input type={'text'} value={url} name={'url'} onChange={handleAttrChange} />
+                    </div>
+                </label>
+            </div>
+            <div className={styles.editable}>
+                <label>
+                    <span>备注</span>
+                    <div className={styles.textareBox}>
+                        <textarea value={description} name={'description'} onChange={handleAttrChange} />
+                    </div>
+                </label>
+            </div>
+        </div>
     )
 }
 
@@ -69,7 +112,7 @@ export default function Main() {
     const actCollectionItemClass = cx({
         navItem: true,
         activateItem: true,
-        collection: true
+        collectionOption: true
     })
     const collectionItemClass = cx({
         navItem: true,
@@ -77,7 +120,7 @@ export default function Main() {
     const actPasswordItemClass = cx({
         navItem: true,
         activateItem: true,
-        password: true
+        passwordOption: true
     })
     const passwordItemClass = cx({
         navItem: true,
@@ -101,6 +144,7 @@ export default function Main() {
             setChosenPassword(passwordUUID)
             api.getPasswordInfo(passwordUUID).then(res => {
                 setPwdInfo(res)
+                console.log(res)
             })
         }
     }
@@ -126,7 +170,7 @@ export default function Main() {
                     ))}
                 </div>}
                 <div className={styles.contentDisplay}>
-                    {Object.keys(pwdInfo).length === 0 ? null : <Password {...pwdInfo} />}
+                    {Object.keys(pwdInfo).length === 0 ? null : <Password info={pwdInfo} setInfo={setPwdInfo} />}
                 </div>
             </div>
         </div>
