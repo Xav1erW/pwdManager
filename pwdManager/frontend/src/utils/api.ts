@@ -53,7 +53,7 @@ export class Api {
         this.client = axios.create({
             baseURL: baseUrl ? baseUrl : this.baseUrl,
             headers: {
-                'Authorization': this.authToken
+                'Authentication': this.authToken
             }
         })
     }
@@ -78,11 +78,11 @@ export class Api {
 
     async BeforeLogin(uuid: string, pubKey: string): Promise<any> {
         const response = await this.post('auth', {
-            'session id': uuid,
-            'public key': pubKey
+            'sessionID': uuid,
+            'publicKey': pubKey
         })
         const jwt = response.data['jwt']
-        const publicKey = response.data["public key"]
+        const publicKey = response.data["public_key"]
         this.setServerPublicKey(publicKey)
         return { jwt, publicKey }
     }
@@ -111,7 +111,7 @@ export class Api {
     async getCollectionList(): Promise<CollectionResponse> {
         const response = await this.get('collection/list')
         if (response.status === 200) {
-            const data: CollectionResponse = { collectionList: response.data.data, dbName: response.data.dbName }
+            const data: CollectionResponse = { collectionList: response.data.data, dbName: response.data.dbname }
             return data
         }
         else {
@@ -130,8 +130,8 @@ export class Api {
         }
     }
 
-    async getPasswordInfo(passwordUUID: string, detail: Boolean = false): Promise<pwdResponse | pwdDetailsResponse> {
-        const response = await this.get(`pwd/info?uuid=${passwordUUID}&detail=${detail}`)
+    async getPasswordInfo(passwordUUID: string, collectionID:string, detail: Boolean = false): Promise<pwdResponse | pwdDetailsResponse> {
+        const response = await this.get(`pwd/info?pwdUUID=${passwordUUID}&detail=${detail}&collectionUUID=${collectionID}`)
         if (detail) {
             if (response.status === 200) {
                 const username = decrypt(response.data.username, this.privateKey)

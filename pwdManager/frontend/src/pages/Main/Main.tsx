@@ -148,7 +148,7 @@ export default function Main() {
     const choosePassword = (passwordUUID: string) => {
         return () => {
             setChosenPassword(passwordUUID)
-            api.getPasswordInfo(passwordUUID).then(res => {
+            api.getPasswordInfo(passwordUUID, chosenCollection).then(res => {
                 setPwdInfo(res)
                 console.log(res)
             })
