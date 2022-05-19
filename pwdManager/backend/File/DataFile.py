@@ -11,7 +11,10 @@ from File.Crypro import *
 from hashlib import sha256, md5
 import os
 import json
+import logging
 import struct
+
+logger = logging.getLogger('File')
 
 class DataFile:
     HEAD = {
@@ -31,22 +34,28 @@ class DataFile:
         """
         self.filePath = filePath
         self.dataObj = dataObj
+        print("initing DataFile")
         if(os.path.exists(self.filePath) and not update):
             raise FileExistsError('the file already exists')
         else:
-            self.file = open(self.filePath, 'wb')
+            logger.info('create or update a file')
+            print('create or update a file')
+            self.file = open(self.filePath, 'rb+')
     
     @classmethod
-    def load(self, filePath:str, key:bytes=None):
+    def load(self, filePath:str=None, key:bytes=None):
         """
         load the data from the file
 
         :param filePath: the path of the password data file
         :param key: the key to decrypt the file
         """
-        if(os.path.exists(filePath)):
-            with open(filePath, 'rb') as f:
+        
+        if(filePath and os.path.exists(filePath)):
+            with open(filePath, 'rb+') as f:
                 return self.parseFile(f , key)
+        elif(not filePath and self.file):
+            return self.parseFile(self.file, key)
         else:
             raise FileNotFoundError('the file does not exist')
     
