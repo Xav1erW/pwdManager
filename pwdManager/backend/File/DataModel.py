@@ -88,6 +88,19 @@ class PwdCollection:
             self.idList = [pwd.uuid for pwd in pwdList]
             self.pwdDict = {pwd.uuid: pwd for pwd in pwdList}
         
+    def add(self, pwd:Pwd):
+        if(isinstance(pwd, Pwd)):
+            self.idList.append(pwd.uuid)
+            self.pwdDict[pwd.uuid] = pwd
+        else:
+            raise TypeError('pwd must be a Pwd')
+    
+    def del_item(self, uuid:str):
+        if(uuid in self.pwdDict):
+            self.idList.remove(uuid)
+            self.pwdDict.pop(uuid)
+        else:
+            raise KeyError(f'uuid: {uuid} not in the collection')
     
     def __str__(self):
         return str(self.detailDict)
@@ -111,6 +124,16 @@ class PwdDataBase:
         self.pwdCollectionDict = {collection.uuid: collection for collection in pwdCollectionList}
         # for collection in pwdCollectionList:
         #     self.pwdCollectionDict[collection.uuid] = collection
+    
+    def add(self, pwdCollection:PwdCollection):
+        '''
+        add a collection to the database
+        '''
+        if(isinstance(pwdCollection, PwdCollection)):
+            self.pwdCollectionIdList.append(pwdCollection.uuid)
+            self.pwdCollectionDict[pwdCollection.uuid] = pwdCollection
+        else:
+            raise TypeError('pwdCollection must be a PwdCollection')
     
     @property
     def idList(self):
@@ -138,6 +161,23 @@ class PwdDataBase:
 
     def __getitem__(self, key):
         return self.pwdCollectionDict.get(key, None)
+
+    def search(self, name:str):
+        '''
+        search the pwd by name
+        '''
+        result = [self.pwdCollectionDict[colid] for colid in self.pwdCollectionIdList for pwd in self.pwdCollectionDict[colid].pwdDict.values() if pwd.name.find(name) != -1]
+        return result
+    
+    def del_item(self, uuid:str):
+        '''
+        delete the collection by uuid
+        '''
+        if(uuid in self.pwdCollectionDict):
+            self.pwdCollectionIdList.remove(uuid)
+            self.pwdCollectionDict.pop(uuid)
+        else:
+            raise KeyError(f'uuid: {uuid} not in the database')
     
 
 if __name__ == '__main__':

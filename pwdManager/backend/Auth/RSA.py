@@ -34,7 +34,13 @@ def useRSA(decodeParams:List[str])->Callable:
                 for key in decodeParams:
                     # only decode the params in decodeParams
                     if key in data.keys():
-                        data[key] = cipher.decrypt(base64.b64decode(data[key]), data[key])
+                        if(isinstance(data[key], str)):
+                            data[key] = cipher.decrypt(base64.b64decode(data[key]), data[key])
+                        elif (isinstance(data[key], list)):
+                            for i in range(len(data[key])):
+                                data[key][i] = cipher.decrypt(base64.b64decode(data[key][i]), data[key][i])
+                        else:
+                            raise Exception('data type error')
                 logger.info('decode data: ', data)
                 ret = func(*args, **kwargs, modified_request_body=data)
                 return ret

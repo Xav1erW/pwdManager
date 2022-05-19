@@ -1,11 +1,14 @@
 import json
+from lib2to3.pgen2.token import OP
 from flask import Flask,request,jsonify,session
 from Lib.flask_pydantic import validate
 from pydantic import BaseModel
 from Auth.jwtAuth import useJWT,tokenGen
 from Auth.RSA import useRSA
-from DataModel import PwdDataBase,PwdCollection,Pwd
-from typing import List
+from File.DataModel import PwdDataBase,PwdCollection,Pwd
+from typing import List, Optional
+import time
+import os
 
 app = Flask(__name__)
 
@@ -13,6 +16,7 @@ with open('config.json', 'r') as f:
     config = json.load(f)
 app.config['SECRET_KEY'] = config['session']['secret']
 
+appPublicKey = config['RSA']['public']
 
 FileList = [
   {
@@ -45,17 +49,33 @@ db_list = [db_sample]
 current_db = db_sample
 current_collection = collection_list[0]
 
+# 测试用的密码文件是test.pwdb，用下面的方式读取
+# db = DataFile.load('./TestDB/test.pwdb', key='test_db'.encode('utf-8'))
+# 找密码文件也在TestDB下找
+# 读取的时候用os遍历目录，通过Digest读取uuid
+
+# dbfiles = os.listdir('./TestDB')
+# dbList = [{"uuid":DataFile('./TestDB/'+dbfile).getDigest()['uuid'], "name":dbfile.split('.')[0]} for dbfile in dbfiles]
+
+
+class authData(BaseModel):
+    sessionID: str
+    publicKey: str
+
 @app.route('/api/auth', methods = ['POST'])
-def auth():
-    sessionID = request.json.get('session id')
-    publicKey = request.json.get('public key')
+@validate()
+def auth(body: authData):
+    # sessionID = request.json.get('session id')
+    # publicKey = request.json.get('public key')
+    sessionID = body.sessionID
+    publicKey = body.publicKey
     print('session id',sessionID)
     print('public key',publicKey)
     session['id'] = sessionID
     session['authorized'] = True
     session['publicKey'] = publicKey
     jwt = tokenGen(sessionID)
-    return jsonify({'jwt':jwt,'public key':publicKey})
+    return jsonify({'jwt':jwt,'public key':appPublicKey})
 
 
 @app.route('/api/fileList')
@@ -91,7 +111,7 @@ def get_db():
         if db.uuid == dbUUID:
             global current_db
             current_db = db
-            data = [{'name':name,'uuid':uuid} for name in db.nameList for uuid in db.idList]
+            data = [{'name':name,'uuid':uuid} for uuid in db.idList for name in db[uuid].name ]
             return jsonify({'dbname':db.name,'data':data})
     return "数据库获取失败"
 
@@ -107,7 +127,7 @@ def get_collection(query:collectionModel):
     collection = current_db.__getitem__(collectionID)
     global current_collection
     current_collection = collection
-    data = [{'uuid':uuid,'name':name} for uuid in collection.idList for name in collection.nameList]
+    data = [{'uuid':uuid,'name':name} for uuid in collection.idList for name in collection.pwdDict[uuid].name]
     return jsonify({'data':data})
 
 
@@ -115,61 +135,60 @@ class detailModel(BaseModel):
     detail: str
     uuid: str
 
-@app.route('/api/pwd/info')
+@app.route('/api/pwd/info', methods = ['GET'])
 @useJWT
 @validate()
 def get_pwd(query:detailModel):
     uuid = query.uuid
-    pwd = current_collection.__getitem__(uuid)
+    pwd = current_collection[uuid]
 
-    title = pwd.__getitem__('name')
-    username = pwd.__getitem__('username')
-    password = pwd.__getitem__('password')
-    url = pwd.__getitem__('url')
-    description = pwd.__getitem__('description')
+    title = pwd['name']
+    username = pwd['username']
+    password = pwd['password']
+    url = pwd['url']
+    description = pwd['description']
     if not query.detail:
         return jsonify({'title':title,'username':username,'password':password,'url':url,'description':description})
     else:
-        updateTime = pwd.__getitem__('updateTime')
-        createTime = pwd.__getitem__('createTime')
-        updateDate = pwd.__getitem__('updateDate')
-        autoComplete = pwd.__getitem__('autoComplete')
-        updateHistory = pwd.__getitem__('updateHistory')
-        matchRules = pwd.__getitem__('matchRules')
+        updateTime = pwd['updateTime']
+        createTime = pwd['createTime']
+        updateDate = pwd['updateDate']
+        autoComplete = pwd['autoComplete']
+        updateHistory = pwd['updateHistory']
+        matchRules = pwd['matchRules']
         return jsonify({'title':title,'username':username,'password':password,'url':url,'description':description,'updateTime':updateTime,'createTime':createTime,'updateDate':updateDate,'updateHistory':updateHistory,'autoComplete':autoComplete,'matchRules':matchRules})
 
 class pwdModel(BaseModel):
     title:str
     username:str
     password:str
-    url:str
-    description:str
-    updateDate:str
-    createTime:str
-    updateTime:str
-    updateHistory:List[str]
-    autoComplete: bool
-    matchRules:List[str]
+    url:Optional[str]
+    description:Optional[str]
+    autoComplete: Optional[bool]
+    matchRules:Optional[List[str]]
 
 @app.route('/api/pwd/info', methods=['POST'])
 @useJWT
-@useRSA(['username','password'])
+@useRSA(['username','password', 'updateHistory'])
 def add_pwd(query:queryModel,body:pwdModel):
     try:
-        pwd = Pwd(body.password,body.title,{'username':body.username,'url':body.url,'description':body.description,'updateDate':body.updateDate,'createTime':body.createTime,'updateTime':body.updateTime,'updateHistory':body.updateHistory,'autoComplete':body.autoComplete,'matchRules':body.matchRules})
-        for collection in collection_list:
-            if collection.uuid == query.uuid:
-                collection.pwdList.append(pwd)
-                collection = PwdCollection(pwdList=collection.pwdList)
-                break
-        for db in db_list:
-            if db == current_db:
-                db = PwdDataBase(collection_list)
-                break
+        timestamp = int(time.time())
+        pwd = Pwd(body.password,body.title,{'username':body.username,'url':body.url,'description':body.description,'updateDate':'','createTime':timestamp,'updateTime':timestamp,'updateHistory':[],'autoComplete':body.autoComplete,'matchRules':body.matchRules})
+        collection = current_db[query.uuid]
+        collection.add(pwd)
+        # for collection in collection_list:
+        #     if collection.uuid == query.uuid:
+        #         collection.pwdList.append(pwd)
+        #         collection = PwdCollection(pwdList=collection.pwdList)
+        #         break
+        # for db in db_list:
+        #     if db == current_db:
+        #         db = PwdDataBase(collection_list)
+        #         break
         return jsonify({'state':'success'})
     except:
         return jsonify({'msg':"illegal parameters"})
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port='8888')

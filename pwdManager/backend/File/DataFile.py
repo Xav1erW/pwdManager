@@ -8,7 +8,7 @@ from io import BytesIO
 from File.DataModel import *
 from File.JsonOperation import *
 from File.Crypro import *
-from hashlib import sha256
+from hashlib import sha256, md5
 import os
 import json
 import struct
@@ -21,7 +21,7 @@ class DataFile:
         'uuid': '',     # 22 bytes
         'hash': ''      # 32 bytes
     }
-    def __init__(self, filePath:str, dataObj:PwdDataBase, update:bool=False):
+    def __init__(self, filePath:str, dataObj:PwdDataBase=None, update:bool=False):
         """
         from the password data file load the data
 
@@ -92,6 +92,7 @@ class DataFile:
         iv = head['uuid'][:16].encode('utf-8')
         if(key is not None):
             # decrypt the content
+            key = md5(key).digest()[:16]
             content = decryptJson(contentBytes.decode('utf-8'), key, iv)
             return fromJson(content)
         else:
@@ -120,6 +121,8 @@ class DataFile:
         # ------ encryption ------
         iv = head['uuid'][:16].encode('utf-8')
         content = toJson(self.dataObj)
+        # use md5 hash generate 16bytes key to support AES-128
+        key = md5(key).digest()[:16]
         contentBytes = encryptJson(content.encode('utf-8'), key, iv)
         # complete the header
         head['hash'] = sha256(contentBytes).digest()
@@ -137,3 +140,27 @@ class DataFile:
         file.write(headBytes)
         file.write(contentBytes)
         file.close()
+    
+    def getDigest(self):
+        """
+        get the digest of the file
+
+        :return: the digest of the file
+        """
+        # =========== read the header ===========
+        head = self.HEAD.copy()
+        offset = self.HEAD['contentOffset']
+
+        # the head struct:
+        # version: 1 byte
+        # contentOffset: 4 bytes
+        # collectionCount: 2 bytes
+        # uuid: 22 bytes
+        # hash: 32 bytes
+        rawHead = struct.unpack('=BIH22s32s', self.file.read(offset))
+        head['version'] = rawHead[0]
+        head['contentOffset'] = rawHead[1]
+        head['collectionCount'] = rawHead[2]
+        head['uuid'] = rawHead[3].decode('utf-8')
+        head['hash'] = rawHead[4]
+        return head
