@@ -53,8 +53,11 @@ export class Api {
         this.client = axios.create({
             baseURL: baseUrl ? baseUrl : this.baseUrl,
             headers: {
-                'Authentication': this.authToken
-            }
+                // 'Authentication': this.authToken,
+                // "Access-Control-Allow-Origin": "*",
+                // "Access-Control-Allow-Credentials": true,
+            },
+            withCredentials: true
         })
     }
 
@@ -83,6 +86,10 @@ export class Api {
         })
         const jwt = response.data['jwt']
         const publicKey = response.data["public_key"]
+        this.client.defaults.headers.common['Authentication'] = jwt
+        this.authToken = jwt
+        console.log('jwt', this.client.defaults.headers.common['Authentication'])
+        console.log('publicKey', publicKey)
         this.setServerPublicKey(publicKey)
         return { jwt, publicKey }
     }
@@ -96,7 +103,12 @@ export class Api {
         console.log('password', password)
         console.log('key', this.serverPublicKey)
         const encryptedPassword = encrypt(password, this.serverPublicKey)
-        const response = await this.post(`verify?uuid=${dbUUID}`, { password: encryptedPassword })
+        // console.log('auth', this.client.defaults.headers.common['Authentication'])
+        const response = await this.client.post(`verify?uuid=${dbUUID}`, { password: encryptedPassword }, {
+            headers: {
+                'Authentication': this.authToken
+            }
+        })
         if (response.status === 200) {
             this.authToken = response.data['jwt']
             // 添加dbUUID到header中作为参数
@@ -193,4 +205,5 @@ export class Api {
 }
 
 // mock api
-export default new Api('http://127.0.0.1:4523/mock/862776/api/')
+// export default new Api('http://127.0.0.1:4523/mock/862776/api/')
+export default new Api('http://127.0.0.1:5000/api/')

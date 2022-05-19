@@ -1,5 +1,6 @@
 import json
 from flask import Flask,request,jsonify,session, Response
+from flask_cors import CORS
 from Lib.flask_pydantic import validate
 from pydantic import BaseModel
 from Auth.jwtAuth import useJWT,tokenGen
@@ -11,7 +12,7 @@ import time
 import os
 
 app = Flask(__name__)
-
+CORS(app, supports_credentials=True, origins=['http://localhost:3000'], allow_headers=['Content-Type', 'Authentication', 'dbUUID'], expose_headers=['Authentication'])
 with open('config.json', 'r') as f:
     config = json.load(f)
 app.config['SECRET_KEY'] = config['session']['secret']
@@ -61,7 +62,11 @@ current_db:PwdDataBase = None
 # {uuid:db}
 decryptedDBs = {}
 
-
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='None',
+)
 
 class authData(BaseModel):
     sessionID: str

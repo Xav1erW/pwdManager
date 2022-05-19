@@ -37,6 +37,7 @@ def useJWT(func:Callable, )->Callable:
     @wraps(func)
     def wrapper(*args, **kwargs):
         token = request.headers.get('Authentication')
+        print(token)
         logger.debug('token: ', token)
         if token is None:
             print('token is None')
@@ -44,6 +45,7 @@ def useJWT(func:Callable, )->Callable:
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
             sessionID = payload['jti']
+            logger.info('sessionID: ', sessionID)
             assert( session['id'] == sessionID )
             if not session['authorized']:
                 return 'session not authorized', 401
