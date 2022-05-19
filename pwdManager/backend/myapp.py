@@ -1,11 +1,11 @@
 import json
-from lib2to3.pgen2.token import OP
-from flask import Flask,request,jsonify,session
+from flask import Flask,request,jsonify,session, Response
 from Lib.flask_pydantic import validate
 from pydantic import BaseModel
 from Auth.jwtAuth import useJWT,tokenGen
 from Auth.RSA import useRSA
 from File.DataModel import PwdDataBase,PwdCollection,Pwd
+from File.DataFile import DataFile
 from typing import List, Optional
 import time
 import os
@@ -41,21 +41,26 @@ FileList = [
   }
 ]
 
-pwd_list = [Pwd('nsko7hw112ue'),Pwd('13urho32Ew2'),Pwd('p99uhwe32f')]
-collection_list = [PwdCollection(pwdList=pwd_list)]
-db_sample = PwdDataBase(collection_list)
-db_list = [db_sample]
-
-current_db = db_sample
-current_collection = collection_list[0]
+# pwd_list = [Pwd('nsko7hw112ue'),Pwd('13urho32Ew2'),Pwd('p99uhwe32f')]
+# collection_list = [PwdCollection(pwdList=pwd_list)]
+# db_sample = PwdDataBase(collection_list)
+# db_list = [db_sample]
 
 # 测试用的密码文件是test.pwdb，用下面的方式读取
 # db = DataFile.load('./TestDB/test.pwdb', key='test_db'.encode('utf-8'))
 # 找密码文件也在TestDB下找
 # 读取的时候用os遍历目录，通过Digest读取uuid
+def get_db_list():
+    dbfiles = os.listdir('./TestDB')
+    db_list = [{"uuid":DataFile('./TestDB/'+dbfile, update=True).getDigest()['uuid'], "name":dbfile.split('.')[0], "db": DataFile('./TestDB/'+dbfile, update=True)} for dbfile in dbfiles]
+    return db_list
+current_db:PwdDataBase = None
+# current_collection = collection_list[0]
 
-# dbfiles = os.listdir('./TestDB')
-# dbList = [{"uuid":DataFile('./TestDB/'+dbfile).getDigest()['uuid'], "name":dbfile.split('.')[0]} for dbfile in dbfiles]
+# 保存已经验证过密码的数据库
+# {uuid:db}
+decryptedDBs = {}
+
 
 
 class authData(BaseModel):
@@ -75,12 +80,14 @@ def auth(body: authData):
     session['authorized'] = True
     session['publicKey'] = publicKey
     jwt = tokenGen(sessionID)
-    return jsonify({'jwt':jwt,'public key':appPublicKey})
+    return jsonify({'jwt':jwt,'public_key':appPublicKey})
 
 
 @app.route('/api/fileList')
 def getFileList():
-    file_list = [{'name':file['name'],'uuid':file['uuid']}for file in FileList]
+    # file_list = [{'name':file['name'],'uuid':file['uuid']}for file in FileList]
+    dbs = get_db_list()
+    file_list = [{'name':db['name'],'uuid':db['uuid']}for db in dbs]
     return jsonify({'data': file_list})
 
 
@@ -97,23 +104,46 @@ def login(query:queryModel,body:verifyModel):
     uuid = query.uuid
     password = body.password
     print('password',password)
-    for file in FileList:
-        if file['uuid'] == uuid and file['password'] == password:
-            return jsonify({'status':'success','meta': {'uuid':uuid,'name':file['name']}})
-    return "密码验证失败"
+    dbs = get_db_list()
+    for db in dbs:
+        if db['uuid'] == uuid:
+            dbfile:DataFile = db['db']
+            print(dbfile)
+            # global current_db
+            current_db = DataFile.load(dbfile.filePath, password.encode('utf-8'))
+            decryptedDBs[current_db.uuid] = current_db
+            session['dbUUID'] = current_db.uuid
+            return {
+                "status": "success",
+                "meta":{
+                    "uuid": uuid,
+                    "name": db['name']
+                }
+            }
+    # for file in FileList:
+    #     if file['uuid'] == uuid and file['password'] == password:
+    #         return jsonify({'status':'success','meta': {'uuid':uuid,'name':file['name']}})
+    return Response(jsonify({"msg":"密码验证失败"}),status=403) 
 
 
 @app.route('/api/collection/list')
 @useJWT
 def get_db():
     dbUUID = request.headers.get('dbUUID')
-    for db in db_list:
-        if db.uuid == dbUUID:
-            global current_db
-            current_db = db
-            data = [{'name':name,'uuid':uuid} for uuid in db.idList for name in db[uuid].name ]
-            return jsonify({'dbname':db.name,'data':data})
-    return "数据库获取失败"
+    current_db:PwdDataBase = decryptedDBs.get(dbUUID, False)
+    print('current_db',current_db)
+    # if(current_db == None or current_db['uuid'] != dbUUID):
+    if(not current_db):
+        return jsonify({'status':'fail','msg':'db not authed'}), 403
+    # for db in db_list:
+    #     if db.uuid == dbUUID:
+    #         global current_db
+    #         current_db = db
+    #         data = [{'name':name,'uuid':uuid} for uuid in db.idList for name in db[uuid].name ]
+    data = [{'name':current_db[uuid].name,'uuid':uuid} for uuid in current_db.idList ]
+    print(data)
+    return jsonify({'dbname':current_db.name,'data':data})
+    # return {"msg":f"数据库获取失败，uuid:{dbUUID}"}
 
 
 class collectionModel(BaseModel):
@@ -124,23 +154,29 @@ class collectionModel(BaseModel):
 @validate()
 def get_collection(query:collectionModel):
     collectionID = query.collectionID
-    collection = current_db.__getitem__(collectionID)
-    global current_collection
-    current_collection = collection
+    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)
+    print('dbs',decryptedDBs)
+    print('current_db',current_db)
+    collection = current_db[collectionID]
+    # global current_collection
+    # current_collection = collection
     data = [{'uuid':uuid,'name':name} for uuid in collection.idList for name in collection.pwdDict[uuid].name]
     return jsonify({'data':data})
 
 
 class detailModel(BaseModel):
     detail: str
-    uuid: str
+    pwdUUID: str
+    collectionUUID:str
 
 @app.route('/api/pwd/info', methods = ['GET'])
 @useJWT
 @validate()
 def get_pwd(query:detailModel):
-    uuid = query.uuid
-    pwd = current_collection[uuid]
+    colID = query.collectionUUID
+    uuid = query.pwdUUID
+    current_db = decryptedDBs.get(session['dbUUID'], None)
+    pwd = current_db[colID][uuid]
 
     title = pwd['name']
     username = pwd['username']
@@ -174,6 +210,7 @@ def add_pwd(query:queryModel,body:pwdModel):
     try:
         timestamp = int(time.time())
         pwd = Pwd(body.password,body.title,{'username':body.username,'url':body.url,'description':body.description,'updateDate':'','createTime':timestamp,'updateTime':timestamp,'updateHistory':[],'autoComplete':body.autoComplete,'matchRules':body.matchRules})
+        current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)
         collection = current_db[query.uuid]
         collection.add(pwd)
         # for collection in collection_list:
@@ -191,4 +228,4 @@ def add_pwd(query:queryModel,body:pwdModel):
 
 
 if __name__ == '__main__':
-    app.run(port='8888')
+    app.run(port='5000',debug=True)

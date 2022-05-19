@@ -29,7 +29,7 @@ def useRSA(decodeParams:List[str])->Callable:
         def wrapper(*args, **kwargs):
             try:
                 data = request.get_json()
-                data = json.loads(data)
+                # data = json.loads(data)
                 cipher = PKCS1_v1_5.new(PRIVATE_KEY)
                 for key in decodeParams:
                     # only decode the params in decodeParams
