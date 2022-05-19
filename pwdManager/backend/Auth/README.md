@@ -58,10 +58,26 @@ def post(body: PostModel):
 2. rsa解码
 3. 验证数据
 
+由于RSA仅支持加密小于密钥长度的信息，过长的信息虽然可以分段加密，但不推荐；同时也为了提高解密速度，因此仅加密必要信息
+`useRSA` 接受一个list作为参数，list内为需要解密的键的名称
+如，对于json
+
+```json
+{
+    "username":"******",
+    "password":"*******",
+    "description":"Lorem ipsum dolor sit amet et takimata adipiscing eirmod. Rebum accusam justo."
+}
+```
+
+其中 `username` 和 `password` 已经被加密，需要解密，而 `description` 是明文，不需要解密，使用时就需要给 `useRSA` 传入 list: `['username', 'password']`
+
+需要加密的信息在接口文档中有标注
+
 ```python
 from Auth.jwtAuth import useJWT, tokenGen
 from Lib.flask_pydantic import validate
-from Auth.RSA import rsaDecoder
+from Auth.RSA import useRSA
 
 
 @app.get('/api/genToken')
@@ -74,11 +90,11 @@ def genToken(query:TokenModel):
 
 @app.post('/api/post')
 @useJWT
-@rsaDecoder
+@useRSA(['username', 'password'])
 @validate()
 def post(body: PostModel):
     logger.debug('/api/post body: ', str(body))
-    return {'name': body.name}
+    return {'name': body.username}
 
 @app.get('/api/delToken')
 @validate()

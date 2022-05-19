@@ -36,7 +36,7 @@ def tokenGen(sessionId:str)->str:
 def useJWT(func:Callable, )->Callable:
     @wraps(func)
     def wrapper(*args, **kwargs):
-        token = request.headers.get('Authorization')
+        token = request.headers.get('Authentication')
         logger.debug('token: ', token)
         if token is None:
             print('token is None')

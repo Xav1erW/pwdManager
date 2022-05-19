@@ -3,7 +3,7 @@
 # version: 1.0
 # description:
 #   offer rsa encrypt and decrypt
-from typing import Callable
+from typing import Callable, List
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
 from flask import request, session
@@ -20,23 +20,36 @@ PRIVATE_KEY = RSA.import_key(config['RSA']['private'])
 logger = logging.getLogger('Auth')
 logger.setLevel(logging.DEBUG)
 
-def rsaDecoder(func:Callable)->Callable:
-    """
-    decorator that decode the request body with RSA private key(store in config.json)
-    """
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            data = request.get_json()
-            cipher = PKCS1_v1_5.new(PRIVATE_KEY)
-            dataDecrypted = cipher.decrypt(base64.b64decode(data['data']), 'decode failed')
-            dataStr = json.loads(dataDecrypted)
-            ret = func(*args, **kwargs, modified_request_body=dataStr)
-            return ret
-        except Exception as e:
-            logger.error(e)
-            return str(e), 401
-    return wrapper
+def useRSA(decodeParams:List[str])->Callable:
+    def rsaDecoder(func:Callable)->Callable:
+        """
+        decorator that decode the request body with RSA private key(store in config.json)
+        """
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                data = request.get_json()
+                # data = json.loads(data)
+                cipher = PKCS1_v1_5.new(PRIVATE_KEY)
+                for key in decodeParams:
+                    # only decode the params in decodeParams
+                    if key in data.keys():
+                        if(isinstance(data[key], str)):
+                            data[key] = cipher.decrypt(base64.b64decode(data[key]), data[key])
+                        elif (isinstance(data[key], list)):
+                            for i in range(len(data[key])):
+                                data[key][i] = cipher.decrypt(base64.b64decode(data[key][i]), data[key][i])
+                        else:
+                            raise Exception('data type error')
+                logger.info('decode data: ', data)
+                ret = func(*args, **kwargs, modified_request_body=data)
+                return ret
+            except Exception as e:
+                logger.error(data)
+                logger.error(f"[RSA]: {e}")
+                return str(e), 401
+        return wrapper
+    return rsaDecoder
 
 def encodeWithRSA(data:bytes)->str:
     """

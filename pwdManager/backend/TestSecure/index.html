@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Test</title>
+</head>
+<body>
+    <!-- <script src="./jsencrypt.min.js"></script> -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jsencrypt/3.2.1/jsencrypt.min.js"></script>
+    <script>
+        // This is a test script to check if the page is secure.
+        // POST request to /api/test
+
+        pubkey = `-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC97ej5iMVJn1xLw3I73jv2MJfO
+wpimU7mK44togNViS2UtRgRnCsJiikb+kMAkEq68PL0X0vc+jPSHPoNd+FsXudR3
+XskMifOd5d1dhGDPryc89uYk1k90mvD07/U7+TmA7N2sC17nUoZNfaiAkzoYD1ky
+kTVaR2RsRK0O3b1u0QIDAQAB
+-----END PUBLIC KEY-----`;
+        var encrypt = new JSEncrypt();
+        encrypt.setPublicKey(pubkey);
+        var encrypted = `{
+  "name": "${encrypt.encrypt("test")}",
+  "hash": "${encrypt.encrypt("iuefiuchia")}",
+  "fuck": "plaintext"
+}`;
+        // var encrypted = encrypt.encrypt(data);
+        console.log(encrypted);
+        var jwt = ''
+        
+        function post(){
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/api/post', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', jwt);
+            xhr.send(JSON.stringify(encrypted));
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    console.log(xhr.responseText);
+                }
+            }
+        }
+
+        function get(){
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/get?name=abc&hash=iuefiuchiahuifhwaiuhfiuahfuiahuife', true);
+            xhr.send();
+        }
+
+        function genToken(){
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/genToken?uuid=1232123', true);
+            xhr.send();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    jwt = JSON.parse(xhr.responseText).token;
+                }
+            }
+        }
+
+        function delToken(){
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/delToken?uuid=1232123', true);
+            xhr.send();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    console.log(xhr.responseText);
+                }
+            }
+        }
+
+    </script>
+    <button onclick="post()">Post</button>
+    <button onclick="get()">Get</button>
+    <button onclick="genToken()">Gen Token</button>
+    <button onclick="delToken()">Del Token</button>
+</body>
+</html>
