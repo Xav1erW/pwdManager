@@ -12,7 +12,7 @@ import time
 import os
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=['http://localhost:3000'], allow_headers=['Content-Type', 'Authentication', 'dbUUID'], expose_headers=['Authentication'])
+# CORS(app, supports_credentials=True, origins=['http://localhost:3000'], allow_headers=['Content-Type', 'Authentication', 'dbUUID'], expose_headers=['Authentication'])
 with open('config.json', 'r') as f:
     config = json.load(f)
 app.config['SECRET_KEY'] = config['session']['secret']
@@ -62,11 +62,11 @@ current_db:PwdDataBase = None
 # {uuid:db}
 decryptedDBs = {}
 
-app.config.update(
-    SESSION_COOKIE_SECURE=True,
-    SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE='None',
-)
+# app.config.update(
+#     SESSION_COOKIE_SECURE=True,
+#     SESSION_COOKIE_HTTPONLY=True,
+#     SESSION_COOKIE_SAMESITE='None',
+# )
 
 class authData(BaseModel):
     sessionID: str
@@ -165,7 +165,7 @@ def get_collection(query:collectionModel):
     collection = current_db[collectionID]
     # global current_collection
     # current_collection = collection
-    data = [{'uuid':uuid,'name':name} for uuid in collection.idList for name in collection.pwdDict[uuid].name]
+    data = [{'uuid':uuid,'name':collection[uuid].name} for uuid in collection.idList ]
     return jsonify({'data':data})
 
 

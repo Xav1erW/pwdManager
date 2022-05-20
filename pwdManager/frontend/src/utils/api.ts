@@ -134,6 +134,7 @@ export class Api {
     async getPasswordList(collectionUUID: string): Promise<pwdListResponse> {
         const response = await this.get(`collection/info?collectionID=${collectionUUID}`)
         if (response.status === 200) {
+            console.log('response', response.data)
             const data: pwdListResponse = { passwordList: response.data.data }
             return data
         }
@@ -206,4 +207,4 @@ export class Api {
 
 // mock api
 // export default new Api('http://127.0.0.1:4523/mock/862776/api/')
-export default new Api('http://127.0.0.1:5000/api/')
+export default new Api()

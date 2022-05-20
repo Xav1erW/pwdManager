@@ -5,7 +5,7 @@ import Login from './pages/Login/Login'
 import Main from './pages/Main/Main'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import api from 'src/utils/api'
-
+import useProxy from './setupProxy'
 const uuid = shortUUID.generate()
 
 // generate rsa key pair
