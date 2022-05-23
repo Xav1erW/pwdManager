@@ -197,6 +197,10 @@ export class Api {
         }
     }
 
+    async deletePassword(passwordUUID: string): Promise<any> {
+        return
+    }
+
     setPrivateKey(privateKey: string) {
         this.privateKey = privateKey
     }

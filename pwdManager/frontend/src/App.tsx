@@ -64,7 +64,7 @@ function App() {
     }, [])
     return (
         <div>
-            <ThemeContext.Provider value='dark'>
+            <ThemeContext.Provider value='light'>
                 <AuthContext.Provider value={{ uuid, privateKey, auth: auth, dbInfo: dbInfo, setDbInfo }}>
                     <BrowserRouter>
                         <Routes>

@@ -23,7 +23,8 @@ interface pwdInfo {
     username: string,
     password: string,
     url: string,
-    description: string
+    description: string,
+    uuid?: string
 }
 
 interface pwdDetailsInfo {
@@ -39,6 +40,7 @@ interface pwdDetailsInfo {
     updateHistory: string[],
     autoComplete: Boolean,
     matchRules: string[], //url list
+    uuid?: string
 
 }
 
@@ -47,7 +49,7 @@ interface passwordListTyle extends Array<passwordItemTyle> { }
 
 
 
-function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function }) {
+function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, delPassword: Function }) {
     const { title, username, password, url, description } = props.info
     const [show, setShow] = useState(false)
     const handleAttrChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,6 +59,10 @@ function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function }) 
     }
     const saveChange = () => {
         api.savePassword(props.info)
+    }
+
+    const delPwd = () => {
+        props.delPassword()
     }
     const theme = useContext(ThemeContext)
 
@@ -105,6 +111,7 @@ function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function }) 
             </div>
             <div className={styles.btns}>
                 <span className={styles.btn} onClick={saveChange}>保存修改</span>
+                <span className={styles.btn} onClick={delPwd}>删除</span>
             </div>
         </div>
     )
@@ -119,6 +126,7 @@ export default function Main() {
     const [chosenPassword, setChosenPassword] = useState('')
     const cx = classNames.bind(styles)
     const theme = useContext(ThemeContext)
+    let tempNewUUID = -1
 
     const collectionNavClass = cx({
         nav: true,
@@ -161,6 +169,23 @@ export default function Main() {
         })
     }, [])
 
+    useEffect(() => {
+        // info内名字变化，collection显示名字同步变化
+        console.log("useEffect info changed")
+        if (pwdInfo.uuid) {
+            // temp.name = pwdInfo.title
+            console.log('have uuid')
+            let list = [...passwordList]
+            list.forEach(item => {
+                if (item.uuid === pwdInfo.uuid) {
+                    item.name = pwdInfo.title
+                    console.log("useEffect name changed")
+                }
+            })
+            setPasswordList([...list])
+        }
+    }, [pwdInfo])
+
     const chooseCollection = (collectionUUID: string) => {
         return () => {
             setChosenCollection(collectionUUID)
@@ -173,11 +198,39 @@ export default function Main() {
         return () => {
             setChosenPassword(passwordUUID)
             api.getPasswordInfo(passwordUUID, chosenCollection).then(res => {
-                setPwdInfo(res)
+                setPwdInfo({...res, uuid: passwordUUID})
                 console.log(res)
             })
         }
     }
+
+    const addPwd = () => {
+        const newPwdInfo: pwdDetailsInfo = {
+            title: '新密码',
+            username: '',
+            password: '',
+            url: '',
+            description: '',
+            updateDate: '',
+            createTime: 0,
+            updateTime: 0,
+            updateHistory: [],
+            autoComplete: false,
+            matchRules: [],
+            uuid: tempNewUUID.toString()
+        }
+        setPasswordList([...passwordList, { name: newPwdInfo.title, uuid: newPwdInfo.uuid as string }])
+        tempNewUUID -= 1
+        setPwdInfo(newPwdInfo)
+    }
+
+    const delPassword = () => {
+        api.deletePassword(chosenPassword)
+        setPasswordList(passwordList.filter(item => item.uuid !== chosenPassword))
+        setChosenPassword('')
+        setPwdInfo({} as pwdInfo)
+    }
+
     return (
         <div className={mainPage}>
             <Topbar />
@@ -191,7 +244,7 @@ export default function Main() {
                         </div>
                     ))}
                     <div>
-                        <img width={'20px'} height={'20px'} src={theme === 'dark'? plusIconDark: plusIcon} alt={'plus'} className={styles.plusIcon} onClick={()=>{}}/>
+                        <img width={'20px'} height={'20px'} src={theme === 'dark' ? plusIconDark : plusIcon} alt={'plus'} className={styles.plusIcon} onClick={() => { }} />
                     </div>
                 </div>
                 {passwordList.length === 0 ? null : <div className={passwordNavClass}>
@@ -202,11 +255,11 @@ export default function Main() {
                         </div>
                     ))}
                     <div>
-                        <img width={'20px'} height={'20px'} src={theme === 'dark'? plusIconDark: plusIcon} alt={'plus'} className={styles.plusIcon} onClick={()=>{}}/>
+                        <img width={'20px'} height={'20px'} src={theme === 'dark' ? plusIconDark : plusIcon} alt={'plus'} className={styles.plusIcon} onClick={addPwd} />
                     </div>
                 </div>}
                 <div className={styles.contentDisplay}>
-                    {Object.keys(pwdInfo).length === 0 ? null : <div style={{width:'80%'}}><Password info={pwdInfo} setInfo={setPwdInfo} /></div>}
+                    {Object.keys(pwdInfo).length === 0 ? null : <div style={{ width: '80%' }}><Password info={pwdInfo} setInfo={setPwdInfo} delPassword={delPassword} /></div>}
                 </div>
             </div>
         </div>
