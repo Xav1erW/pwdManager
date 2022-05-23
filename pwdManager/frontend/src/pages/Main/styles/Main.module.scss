@@ -192,9 +192,15 @@
             align-items: flex-start;
         }
 
+        .btns{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
         .btn {
             display: block;
-            margin: 10px auto;
+            margin: 10px 20px;
             width: 80px;
             text-align: center;
             height: 40px;
