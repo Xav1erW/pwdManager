@@ -266,7 +266,8 @@ export default function Main() {
                     </div>
                 </div>}
                 <div className={styles.contentDisplay}>
-                    {Object.keys(pwdInfo).length === 0 ? null : <div style={{ width: '80%' }}><Password info={pwdInfo} setInfo={setPwdInfo} delPassword={delPassword} colUUID={chosenCollection} /></div>}
+                    {/* {Object.keys(pwdInfo).length === 0 ? null : <div style={{ width: '80%' }}><Password info={pwdInfo} setInfo={setPwdInfo} delPassword={delPassword} colUUID={chosenCollection} /></div>} */}
+                    {Object.keys(pwdInfo).length === 0 ? null : <div ><Password info={pwdInfo} setInfo={setPwdInfo} delPassword={delPassword} colUUID={chosenCollection} /></div>}
                 </div>
             </div>
         </div>

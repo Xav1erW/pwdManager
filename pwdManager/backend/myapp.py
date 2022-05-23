@@ -11,7 +11,7 @@ from typing import List, Optional
 import time
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/', static_folder='../gui')
 # CORS(app, supports_credentials=True, origins=['http://localhost:3000'], allow_headers=['Content-Type', 'Authentication', 'dbUUID'], expose_headers=['Authentication'])
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -51,9 +51,15 @@ FileList = [
 # db = DataFile.load('./TestDB/test.pwdb', key='test_db'.encode('utf-8'))
 # 找密码文件也在TestDB下找
 # 读取的时候用os遍历目录，通过Digest读取uuid
+def get_db_path():
+    dbfolder = os.path.join(os.path.dirname(__file__), 'TestDB')
+    return dbfolder
+
 def get_db_list():
-    dbfiles = os.listdir('./TestDB')
-    db_list = [{"uuid":DataFile('./TestDB/'+dbfile, update=True).getDigest()['uuid'], "name":dbfile.split('.')[0], "db": DataFile('./TestDB/'+dbfile, update=True)} for dbfile in dbfiles]
+    dbFolder = get_db_path()
+    print(dbFolder)
+    dbfiles = os.listdir(dbFolder)
+    db_list = [{"uuid":DataFile(os.path.join(dbFolder, dbfile) , update=True).getDigest()['uuid'], "name":dbfile.split('.')[0], "db": DataFile(os.path.join(dbFolder, dbfile), update=True)} for dbfile in dbfiles]
     return db_list
 current_db:PwdDataBase = None
 # current_collection = collection_list[0]

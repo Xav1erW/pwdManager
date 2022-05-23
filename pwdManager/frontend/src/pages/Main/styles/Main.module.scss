@@ -11,6 +11,11 @@
         flex-direction: row;
     }
 
+    .mainContent>div:nth-last-child(2){
+        // 最后一个导航栏右上圆角
+        border-radius: 0 20px 0 0;
+    }
+
     .nav {
         flex: 1 0 12%;
         display: flex;
