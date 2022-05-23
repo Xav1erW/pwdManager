@@ -11,6 +11,7 @@ from typing import List, Optional
 import time
 import os
 
+
 app = Flask(__name__)
 # CORS(app, supports_credentials=True, origins=['http://localhost:3000'], allow_headers=['Content-Type', 'Authentication', 'dbUUID'], expose_headers=['Authentication'])
 with open('config.json', 'r') as f:
@@ -208,7 +209,8 @@ class pwdModel(BaseModel):
     autoComplete: Optional[bool]
     matchRules:Optional[List[str]]
 
-@app.route('/api/pwd/info', methods=['POST'])
+
+@app.route('/api/pwd/create', methods=['POST'])
 @useJWT
 @useRSA(['username','password', 'updateHistory'])
 @validate()
@@ -232,6 +234,127 @@ def add_pwd(query:queryModel,body:pwdModel):
     except Exception as e:
         print(e)
         return jsonify({'msg':"illegal parameters"}), 400
+
+
+class udtModel(BaseModel):
+    pwdID: str
+    collectionID: str
+
+class udtPwdModel(BaseModel):
+    title: Optional[str]
+    username: Optional[str]
+    password: Optional[str]
+    url: Optional[str]
+    description: Optional[str]
+    autoComplete: Optional[bool]
+    matchRules: Optional[List[str]]
+    updateDate:Optional[str]
+
+@app.route('/api/pwd/update', methods=['POST'])
+@useJWT
+@useRSA(['username','password'])
+@validate()
+def update_pwd(query:udtModel, body:udtPwdModel):
+    pwdID = query.pwdID
+    collectionID = query.collectionID
+    current_db: PwdDataBase = decryptedDBs.get(session['dbUUID'], None)
+    pwd = current_db[collectionID][pwdID]
+
+    if body.title:
+        pwd['name'] = body.title
+    if body.username:
+        pwd['username'] = body.username
+    if body.password:
+        if pwd['updateHistory']:
+            pwd['updateHistory'].append(pwd['password'])
+        else:
+            pwd['updateHistory']=[pwd['password']]
+        pwd['password'] = body.password
+    if body.url:
+        pwd['url'] = body.url
+    if body.description:
+        pwd['description'] = body.description
+    if body.autoComplete:
+        pwd['autoComplete'] = body.autoComplete
+    if body.matchRules:
+        pwd['matchRules'] = body.matchRules
+    if body.updateDate:
+        pwd['updateDate'] = body.updateDate
+
+    pwd['updateTime']= time.time()
+    return jsonify({"status":"success"})
+
+class searchpwdModel(BaseModel):
+    name: str
+
+@app.route('/api/search')
+@useJWT
+@validate()
+def search_pwd(query:searchpwdModel):
+    name = query.name
+    current_db = decryptedDBs.get(session['dbUUID'], None)
+    res = current_db.search(name)
+    data = [{'name': name, 'uuid': pwd.uuid} for collection in res for pwd in collection.pwdDict.values() if pwd.name == name]
+    return jsonify(data)
+
+
+class addCollectionModel(BaseModel):
+    name: str
+
+
+@app.route('/api/collection/create', methods=['POST'])
+@useJWT
+@validate()
+def create_collection(body:addCollectionModel):
+    current_db = decryptedDBs.get(session['dbUUID'], None)
+    newCol = PwdCollection(name=body.name)
+    current_db.add(newCol)
+    return jsonify({'status':'success','data':{'uuid':newCol.uuid,'name':body.name}})
+
+
+class addDBModel(BaseModel):
+    name: str
+    password: str
+
+
+@app.route('/api/database/create', methods=['POST'])
+@useJWT
+@useRSA(['password'])
+@validate()
+def create_db(body:addDBModel):
+    name, password = body.name, body.password
+    new_db = PwdDataBase([PwdCollection()],**{'name': name})
+    new_file = DataFile('./TestDB/'+name,new_db,True)
+    new_file.save(password.encode('utf-8'),'./TestDB/'+name,True)
+    return jsonify({'status': 'success', 'data':{'name': name, 'uuid':new_file.getDigest()['uuid']}})
+
+
+class delPwdModel(BaseModel):
+    colID: str
+    pwdID: str
+
+
+@app.route('/api/pwd/del')
+@useJWT
+@validate()
+def del_pwd(query:delPwdModel):
+    current_db = decryptedDBs.get(session['dbUUID'], None)
+    collection = current_db[query.colID]
+    collection.del_item(query.pwdID)
+    return jsonify({'status':'success'})
+
+
+class delColModel(BaseModel):
+    colID: str
+
+@app.route('/api/collection/delete')
+@useJWT
+@validate()
+def del_col(query:delColModel):
+    current_db = decryptedDBs.get(session['dbUUID'], None)
+    current_db.del_item(query.colID)
+    return jsonify({'status':'success'})
+
 
 
 if __name__ == '__main__':
