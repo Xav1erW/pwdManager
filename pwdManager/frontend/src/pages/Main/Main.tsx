@@ -48,8 +48,7 @@ interface collectionListTyle extends Array<collectionItemTyle> { }
 interface passwordListTyle extends Array<passwordItemTyle> { }
 
 
-
-function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, delPassword: Function }) {
+function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, delPassword: Function, colUUID: string }) {
     const { title, username, password, url, description } = props.info
     const [show, setShow] = useState(false)
     const handleAttrChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -58,7 +57,18 @@ function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, de
         props.setInfo({ ...props.info, [attr]: value })
     }
     const saveChange = () => {
-        api.savePassword(props.info)
+        if (props.info.uuid && props.info.uuid[0] === '-') {
+            // 这是新加入的密码
+            // 检测必要信息
+            if (props.info.username === '' && props.info.password === '') {
+                alert('请至少输入用户名和密码')
+                return
+            }
+            api.createPassword(props.info, props.colUUID)
+        }
+        else if (props.info.uuid) {
+            api.savePassword(props.info, props.colUUID, props.info.uuid)
+        }
     }
 
     const delPwd = () => {
@@ -69,7 +79,7 @@ function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, de
     const MyClassName = classNames.bind(styles)
     const passwordStyle = MyClassName({
         password: true,
-        dark: theme === 'dark'
+        dark: theme.theme === 'dark'
     })
 
     return (
@@ -125,7 +135,7 @@ export default function Main() {
     const [chosenCollection, setChosenCollection] = useState('')
     const [chosenPassword, setChosenPassword] = useState('')
     const cx = classNames.bind(styles)
-    const theme = useContext(ThemeContext)
+    const {theme, toggleTheme} = useContext(ThemeContext)
     let tempNewUUID = -1
 
     const collectionNavClass = cx({
@@ -171,15 +181,12 @@ export default function Main() {
 
     useEffect(() => {
         // info内名字变化，collection显示名字同步变化
-        console.log("useEffect info changed")
         if (pwdInfo.uuid) {
             // temp.name = pwdInfo.title
-            console.log('have uuid')
             let list = [...passwordList]
             list.forEach(item => {
                 if (item.uuid === pwdInfo.uuid) {
                     item.name = pwdInfo.title
-                    console.log("useEffect name changed")
                 }
             })
             setPasswordList([...list])
@@ -198,7 +205,7 @@ export default function Main() {
         return () => {
             setChosenPassword(passwordUUID)
             api.getPasswordInfo(passwordUUID, chosenCollection).then(res => {
-                setPwdInfo({...res, uuid: passwordUUID})
+                setPwdInfo({ ...res, uuid: passwordUUID })
                 console.log(res)
             })
         }
@@ -225,7 +232,7 @@ export default function Main() {
     }
 
     const delPassword = () => {
-        api.deletePassword(chosenPassword)
+        api.deletePassword(chosenPassword, chosenCollection)
         setPasswordList(passwordList.filter(item => item.uuid !== chosenPassword))
         setChosenPassword('')
         setPwdInfo({} as pwdInfo)
@@ -259,7 +266,7 @@ export default function Main() {
                     </div>
                 </div>}
                 <div className={styles.contentDisplay}>
-                    {Object.keys(pwdInfo).length === 0 ? null : <div style={{ width: '80%' }}><Password info={pwdInfo} setInfo={setPwdInfo} delPassword={delPassword} /></div>}
+                    {Object.keys(pwdInfo).length === 0 ? null : <div style={{ width: '80%' }}><Password info={pwdInfo} setInfo={setPwdInfo} delPassword={delPassword} colUUID={chosenCollection} /></div>}
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, createContext, useState, EffectCallback } from 'react'
+import React, { useEffect, createContext, useState, EffectCallback, ReactChild } from 'react'
 import { generateKeys } from 'src/utils/rsa'
 import shortUUID from 'short-uuid'
 import Login from './pages/Login/Login'
@@ -39,7 +39,6 @@ const initialContext: authContextType = {
 }
 
 export const AuthContext = createContext(initialContext)
-export const ThemeContext = createContext('dark')
 
 
 interface dbInfoTyle {
@@ -47,9 +46,23 @@ interface dbInfoTyle {
     dbName: string,
 }
 
+export const ThemeContext = createContext({theme:'dark', toggleTheme: () => {}})
+function ThemeProvider ({ children }:React.PropsWithChildren<{}>) {
+    const [theme, setTheme] = useState('light')
+    const toggleTheme = () => {
+        setTheme(theme === 'light' ? 'dark' : 'light')
+    }
+    return (
+        <ThemeContext.Provider value={{theme, toggleTheme}}>
+            {children}
+        </ThemeContext.Provider>
+    )
+}
+
+
 function App() {
     const [auth, setAuth] = useState({ jwt: '', publicKey: '' })
-
+    
     const [dbInfo, setDbInfo] = useState<dbInfoTyle>({ dbUUID: '', dbName: '' })
 
     useEffect(() => {
@@ -64,7 +77,7 @@ function App() {
     }, [])
     return (
         <div>
-            <ThemeContext.Provider value='light'>
+            <ThemeProvider>
                 <AuthContext.Provider value={{ uuid, privateKey, auth: auth, dbInfo: dbInfo, setDbInfo }}>
                     <BrowserRouter>
                         <Routes>
@@ -73,7 +86,7 @@ function App() {
                         </Routes>
                     </BrowserRouter>
                 </AuthContext.Provider>
-            </ThemeContext.Provider>
+            </ThemeProvider>
         </div>
     )
 }

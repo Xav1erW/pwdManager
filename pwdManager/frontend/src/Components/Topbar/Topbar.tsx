@@ -7,7 +7,7 @@ export default function Topbar() {
     const MyClassName = classNames.bind(styles)
     const topbar = MyClassName({
         topbar: true,
-        dark: theme === 'dark'
+        dark: theme.theme === 'dark'
     })
     return (
         <div className={topbar}>
@@ -21,6 +21,7 @@ export default function Topbar() {
             <div className={styles.search}>
                 <input type="text" placeholder="搜索" />
             </div>
+            <span className={styles.changeTheme} onClick={()=>{theme.toggleTheme()}}>{theme.theme === 'light'?"🌙":"\u2600"}</span>
         </div>
     )
 }

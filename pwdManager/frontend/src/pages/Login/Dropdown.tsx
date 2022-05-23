@@ -41,7 +41,7 @@ export default function Dropdown(props: any): JSX.Element {
     const MyClassName = classNames.bind(styles)
     const dropdown = MyClassName({
         dropdown: true,
-        dark: themeContext === 'dark'
+        dark: themeContext.theme === 'dark'
     })
 
     return (

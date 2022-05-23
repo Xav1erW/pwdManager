@@ -45,17 +45,17 @@ export default function Login(props: any): JSX.Element {
 
     const loginPage = MyClassName({
         loginPage: true,
-        dark: themeContext === 'dark'
+        dark: themeContext.theme === 'dark'
     })
 
     const file = MyClassName({
         file: true,
-        dark: themeContext === 'dark'
+        dark: themeContext.theme === 'dark'
     })
 
     const masterPassword = MyClassName({
         masterPassword: true,
-        dark: themeContext === 'dark'
+        dark: themeContext.theme === 'dark'
     })
 
     return (
@@ -73,6 +73,7 @@ export default function Login(props: any): JSX.Element {
                 <span className={styles.otherMethod}>其他解锁方式？</span>
                 <span className={styles.loginBtn} onClick={decript}>ENTER</span>
             </div>
+            <span className={styles.changeTheme} onClick={()=>{themeContext.toggleTheme()}}>{themeContext.theme === 'light'?"🌙":"\u2600"}</span>
         </div>
     )
 }

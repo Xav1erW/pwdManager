@@ -187,8 +187,10 @@ export class Api {
         }
     }
 
-    async savePassword(password: pwdUpdateRequest|pwdUpdateRequestDetail): Promise<any> {
-        const response = await this.client.post('pwd/info', password)
+    async savePassword(password: pwdUpdateRequest|pwdUpdateRequestDetail, colUUID:string, pwdID:string): Promise<any> {
+        const encryptedPassword = encrypt(password.password, this.serverPublicKey)
+        const encryptedUsername = encrypt(password.username, this.serverPublicKey)
+        const response = await this.client.post(`pwd/update?pwdID=${pwdID}&collectionID=${colUUID}`, {...password, username: encryptedUsername, password: encryptedPassword})
         if (response.status === 200) {
             return response.data
         }
@@ -197,8 +199,26 @@ export class Api {
         }
     }
 
-    async deletePassword(passwordUUID: string): Promise<any> {
-        return
+    async createPassword(password: pwdUpdateRequest, colUUID:string): Promise<any> {
+        const encryptedPassword = encrypt(password.password, this.serverPublicKey)
+        const encryptedUsername = encrypt(password.username, this.serverPublicKey)
+        const response = await this.client.post(`pwd/create?uuid=${colUUID}`, {...password, username: encryptedUsername, password: encryptedPassword})
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            throw new Error(response.status.toString())
+        }
+    }
+
+    async deletePassword(passwordUUID: string, collectionID:string): Promise<any> {
+        const response = await this.client.get(`/api/pwd/del?pwdID=${passwordUUID}&colID=${collectionID}`)
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            throw new Error(response.status.toString())
+        }
     }
 
     setPrivateKey(privateKey: string) {
