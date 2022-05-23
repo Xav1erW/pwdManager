@@ -27,18 +27,20 @@ export interface authContextType {
     setDbInfo: (dbInfo: { dbName: string, dbUUID: string }) => void
 }
 
-const initialContext:authContextType = {
+const initialContext: authContextType = {
     uuid,
     privateKey,
-    auth:{jwt:'', publicKey:''},
+    auth: { jwt: '', publicKey: '' },
     dbInfo: {
         dbUUID: '',
         dbName: '',
     },
-    setDbInfo: () => {},
+    setDbInfo: () => { },
 }
 
 export const AuthContext = createContext(initialContext)
+export const ThemeContext = createContext('dark')
+
 
 interface dbInfoTyle {
     dbUUID: string,
@@ -46,11 +48,11 @@ interface dbInfoTyle {
 }
 
 function App() {
-    const [auth, setAuth] = useState({jwt:'', publicKey:''})
+    const [auth, setAuth] = useState({ jwt: '', publicKey: '' })
 
-    const [dbInfo, setDbInfo] = useState<dbInfoTyle>({dbUUID:'', dbName:''})
+    const [dbInfo, setDbInfo] = useState<dbInfoTyle>({ dbUUID: '', dbName: '' })
 
-    useEffect(()=>{
+    useEffect(() => {
         const getData = async () => {
             const data = await api.BeforeLogin(uuid, publicKey)
             return data
@@ -62,14 +64,16 @@ function App() {
     }, [])
     return (
         <div>
-            <AuthContext.Provider value={{ uuid, privateKey, auth:auth, dbInfo: dbInfo, setDbInfo }}>
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/" element={<Login />} />
-                        <Route path="/home" element={<Main />} />
-                    </Routes>
-                </BrowserRouter>
-            </AuthContext.Provider>
+            <ThemeContext.Provider value='dark'>
+                <AuthContext.Provider value={{ uuid, privateKey, auth: auth, dbInfo: dbInfo, setDbInfo }}>
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path="/" element={<Login />} />
+                            <Route path="/home" element={<Main />} />
+                        </Routes>
+                    </BrowserRouter>
+                </AuthContext.Provider>
+            </ThemeContext.Provider>
         </div>
     )
 }

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
-
+import React, { useState, useEffect, useContext } from 'react'
+import classNames from 'classnames/bind';
 import styles from './styles/Dropdown.module.scss';
+import {ThemeContext} from 'src/App';
 
 // a dropdown selector component by using ul for the user to select the file
 // in the props.files array
@@ -15,6 +16,7 @@ interface FileInfo {
 
 export default function Dropdown(props: any): JSX.Element {
     const { files, selected, onSelect } = props
+    const themeContext = useContext(ThemeContext)
 
     const [show, setShow] = useState(false)
     const [selectedItem, setSelectedItem] = useState(selected)
@@ -35,9 +37,15 @@ export default function Dropdown(props: any): JSX.Element {
             onSelect(uuid)
         }
     }
+    
+    const MyClassName = classNames.bind(styles)
+    const dropdown = MyClassName({
+        dropdown: true,
+        dark: themeContext === 'dark'
+    })
 
     return (
-        <div className={styles.dropdown}>
+        <div className={dropdown}>
             {selectedItem}
             <span className={styles.dropbtn} onClick={handleClick}/>
             <ul className={show ? styles.show : styles.hide}>

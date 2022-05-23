@@ -1,9 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 
 import classNames from 'classnames/bind'
 import api from 'src/utils/api'
 import Topbar from 'src/Components/Topbar/Topbar'
 import styles from './styles/Main.module.scss'
+import { ThemeContext } from 'src/App'
+import plusIcon from './assets/plus.svg'
+import plusIconDark from './assets/plus_dark.svg'
 
 interface collectionItemTyle {
     name: string,
@@ -44,7 +47,7 @@ interface passwordListTyle extends Array<passwordItemTyle> { }
 
 
 
-function Password(props: {info: pwdInfo | pwdDetailsInfo, setInfo:Function}) {
+function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function }) {
     const { title, username, password, url, description } = props.info
     const [show, setShow] = useState(false)
     const handleAttrChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -55,8 +58,16 @@ function Password(props: {info: pwdInfo | pwdDetailsInfo, setInfo:Function}) {
     const saveChange = () => {
         api.savePassword(props.info)
     }
+    const theme = useContext(ThemeContext)
+
+    const MyClassName = classNames.bind(styles)
+    const passwordStyle = MyClassName({
+        password: true,
+        dark: theme === 'dark'
+    })
+
     return (
-        <div className={styles.password}>
+        <div className={passwordStyle}>
             <div className={styles.title}>
                 <input value={title} name={'title'} onChange={handleAttrChange} />
             </div>
@@ -107,29 +118,42 @@ export default function Main() {
     const [chosenCollection, setChosenCollection] = useState('')
     const [chosenPassword, setChosenPassword] = useState('')
     const cx = classNames.bind(styles)
+    const theme = useContext(ThemeContext)
+
     const collectionNavClass = cx({
         nav: true,
         collectionNav: true,
+        dark: theme === 'dark'
     })
     const passwordNavClass = cx({
         nav: true,
         passwordNav: true,
+        dark: theme === 'dark'
     })
     const actCollectionItemClass = cx({
         navItem: true,
         activateItem: true,
-        collectionOption: true
+        collectionOption: true,
+        dark: theme === 'dark'
     })
     const collectionItemClass = cx({
         navItem: true,
+        dark: theme === 'dark'
     })
     const actPasswordItemClass = cx({
         navItem: true,
         activateItem: true,
-        passwordOption: true
+        passwordOption: true,
+        dark: theme === 'dark'
     })
     const passwordItemClass = cx({
         navItem: true,
+        dark: theme === 'dark'
+    })
+
+    const mainPage = cx({
+        mainPage: true,
+        dark: theme === 'dark'
     })
     useEffect(() => {
         api.getCollectionList().then(res => {
@@ -155,7 +179,7 @@ export default function Main() {
         }
     }
     return (
-        <div className={styles.mainPage}>
+        <div className={mainPage}>
             <Topbar />
             <div className={styles.mainContent}>
                 <div className={collectionNavClass}>
@@ -166,6 +190,9 @@ export default function Main() {
                             {/* <hr/> */}
                         </div>
                     ))}
+                    <div>
+                        <img width={'20px'} height={'20px'} src={theme === 'dark'? plusIconDark: plusIcon} alt={'plus'} className={styles.plusIcon} onClick={()=>{}}/>
+                    </div>
                 </div>
                 {passwordList.length === 0 ? null : <div className={passwordNavClass}>
                     {passwordList.map(item => (
@@ -174,9 +201,12 @@ export default function Main() {
                             {/* <hr/> */}
                         </div>
                     ))}
+                    <div>
+                        <img width={'20px'} height={'20px'} src={theme === 'dark'? plusIconDark: plusIcon} alt={'plus'} className={styles.plusIcon} onClick={()=>{}}/>
+                    </div>
                 </div>}
                 <div className={styles.contentDisplay}>
-                    {Object.keys(pwdInfo).length === 0 ? null : <Password info={pwdInfo} setInfo={setPwdInfo} />}
+                    {Object.keys(pwdInfo).length === 0 ? null : <div style={{width:'80%'}}><Password info={pwdInfo} setInfo={setPwdInfo} /></div>}
                 </div>
             </div>
         </div>

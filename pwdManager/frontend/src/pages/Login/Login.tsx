@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Dropdown from './Dropdown';
-import { AuthContext, authContextType } from 'src/App';
+import { AuthContext, authContextType, ThemeContext } from 'src/App';
 import api from 'src/utils/api';
 import styles from './styles/Login.module.scss';
+import classNames from 'classnames/bind';
 
 
 export default function Login(props: any): JSX.Element {
     const authContext: authContextType = useContext(AuthContext)
+    const themeContext = useContext(ThemeContext)
     const [files, setFiles] = useState([])
     const [selected, setSelected] = useState("")
     const passwordInput = useRef<HTMLInputElement>(null)
@@ -39,18 +41,37 @@ export default function Login(props: any): JSX.Element {
         }
     }
 
+    const MyClassName = classNames.bind(styles)
+
+    const loginPage = MyClassName({
+        loginPage: true,
+        dark: themeContext === 'dark'
+    })
+
+    const file = MyClassName({
+        file: true,
+        dark: themeContext === 'dark'
+    })
+
+    const masterPassword = MyClassName({
+        masterPassword: true,
+        dark: themeContext === 'dark'
+    })
+
     return (
-        <div className={styles.loginPage}>
+        <div className={loginPage}>
             <div className={styles.loginForm}>
-                <div className={styles.file}>
-                    <span>密码文件</span>
+                <div className={file}>
+                    <span>File</span>
                     <Dropdown files={files} onSelect={setSelected} />
                 </div>
-                <div className={styles.masterPassword}>
-                    <span>主密码</span>
+                <div className={masterPassword}>
+                    <span>Password</span>
                     <input type="password" className={styles.passwordInput} ref={passwordInput} />
                 </div>
-                <span className={styles.loginBtn} onClick={decript}>解密文件</span>
+                {/* <span className={styles.loginBtn} onClick={decript}>解密文件</span> */}
+                <span className={styles.otherMethod}>其他解锁方式？</span>
+                <span className={styles.loginBtn} onClick={decript}>ENTER</span>
             </div>
         </div>
     )

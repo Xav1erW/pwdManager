@@ -38,20 +38,30 @@
     left: 546px;
     top: 50px;
 
-    background: rgba(153, 150, 150, 0.94);
+    background: rgba(196, 196, 196, 0.4);
+    backdrop-filter: blur(150px);
     border-radius: 10px;
     flex: 2 0;
     margin-left: 20px;
 
-    input{
+    input {
         background: transparent;
         border: none;
         outline: none;
         height: 100%;
-        color: $color-white;
+        // color: $color-white;
+        color: $color-black;
         margin-left: min(5%, 10px);
     }
-    input::-webkit-input-placeholder{
+
+    input::-webkit-input-placeholder {
         color: $color-gray;
+    }
+}
+
+.topbar.dark{
+
+    .option{
+        color: $dark-title-color;
     }
 }

@@ -1,7 +1,7 @@
 @import 'variables.scss';
 
 .loginPage {
-    background-color: $backgroundColor;
+    background: url(../assets/sun.svg) no-repeat center center fixed, $loginBg;
     height: 100vh;
     padding: 20px;
     display: flex;
@@ -9,7 +9,7 @@
     align-items: center;
 
     .loginForm {
-        width: 400px;
+        width: 500px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -19,9 +19,15 @@
             width: 100%;
             margin-bottom: 30px;
 
-            >span{
+            >span {
                 display: block;
                 margin-bottom: 10px;
+                font-family: 'Poppins';
+                font-style: normal;
+                font-weight: 500;
+                font-size: 30px;
+                line-height: 45px;
+                letter-spacing: 0.03em;
             }
         }
 
@@ -32,22 +38,33 @@
             width: 100%;
             margin-bottom: 50px;
             font-size: 16px;
-            >span{
+
+            >span {
                 margin-bottom: 10px;
+                font-family: 'Poppins';
+                font-style: normal;
+                font-weight: 500;
+                font-size: 30px;
+                line-height: 45px;
+                letter-spacing: 0.03em;
             }
         }
 
         .passwordInput {
-            background-color: transparent;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border: 1px solid #EFEFEF;
+            background: rgba(239, 239, 239, 0.048);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+            height: 50px;
             width: 100%;
-            height: 30px;
             font-size: 20px;
             outline: none;
-            padding: 0px 5px;
+            padding: 0px 15px;
+            font-weight: 500;
         }
-        input[type="password" i]::-ms-reveal{
+
+        input[type="password"i]::-ms-reveal {
             display: none;
         }
 
@@ -60,9 +77,44 @@
             border: none;
             border-radius: 5px;
             padding: 10px;
-            font-size: 16px;
+            font-size: 25px;
             cursor: pointer;
             text-align: center;
+            font-weight: $btnFontWeight;
+            color: $btnFontColor;
         }
+
+        .otherMethod {
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 20px;
+            line-height: 23px;
+
+            color: #0F0103;
+            margin-bottom: 20px;
+        }
+    }
+}
+
+.loginPage.dark{
+    background: url(../assets/Spaceman.svg) no-repeat calc(50% - 320px ) 50%/max(10%, 150px) , url(../assets/moon.svg) no-repeat 
+    70% 40%/max(20%, 300px) , url(../assets/stars.svg) center center fixed, #000000;
+
+    span{
+        color: $dark-title-color;
+    }
+
+    .otherMethod{
+        color: $color-white;
+    }
+
+    .passwordInput{
+        color: $color-white;
+    }
+
+    .loginBtn{
+        background-color: $btnColorDark;
+        color: $color-white;
     }
 }
