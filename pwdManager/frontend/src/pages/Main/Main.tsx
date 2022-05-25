@@ -11,6 +11,8 @@ import plusIconDark from './assets/plus_dark.svg'
 import hiddenIcon from './assets/hidden.svg'
 import showIcon from './assets/show.svg'
 import genIcon from './assets/gen.svg'
+import showIconDark from './assets/showDark.svg'
+import hiddenIconDark from './assets/hiddenDark.svg'
 
 interface collectionItemTyle {
     name: string,
@@ -107,7 +109,7 @@ function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, de
                     <div className={styles.inputBox}>
                         <input type={showPwd ? 'text' : 'password'} value={password} name={'password'} onChange={handleAttrChange} />
                         <img src={genIcon} onClick={() => props.setShowGen(true)} width={'20px'} height={'20px'} />
-                        {showPwd ? <img src={hiddenIcon} onClick={() => {setShowPwd(false)}} width={'20px'} height={'20px'} /> : <img src={showIcon} onClick={() => {setShowPwd(true)}} width={'20px'} height={'20px'} />}
+                        {showPwd ? <img src={theme.theme === 'dark' ? hiddenIconDark : hiddenIcon} onClick={() => {setShowPwd(false)}} width={'20px'} height={'20px'} /> : <img src={theme.theme === 'dark' ? showIconDark : showIcon} onClick={() => {setShowPwd(true)}} width={'20px'} height={'20px'} />}
                     </div>
                 </label>
             </div>
@@ -142,7 +144,7 @@ export default function Main() {
     const [pwdInfo, setPwdInfo] = useState<pwdInfo | pwdDetailsInfo>({} as pwdInfo)
     const [chosenCollection, setChosenCollection] = useState('')
     const [chosenPassword, setChosenPassword] = useState('')
-    const [showGren, setShowGren] = useState(true)
+    const [showGren, setShowGren] = useState(false)
     const cx = classNames.bind(styles)
     const {theme, toggleTheme} = useContext(ThemeContext)
     let tempNewUUID = -1

@@ -140,6 +140,14 @@
                     width: calc(100% - 2 * $input-padding);
                     font-size: 15px;
                 }
+
+                >img {
+                    cursor: pointer;
+                }
+
+                >img:nth-child(2){
+                    margin-right: 10px;
+                }
             }
 
             .textareBox {
@@ -212,6 +220,11 @@
             font-size: 15px;
             line-height: 40px;
             cursor: pointer;
+            &:active{
+                transform: scale(0.95);
+                transition: all 0.05s ease-in-out;
+                box-shadow: none;
+            }
         }
     }
 }
