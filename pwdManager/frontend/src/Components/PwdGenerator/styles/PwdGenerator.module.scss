@@ -1,0 +1,156 @@
+.Pwd_Generator {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+
+    .generatorPannel {
+        width: 400px;
+        height: 350px;
+        border-radius: 10px;
+        padding: 10px 20px;
+        box-shadow: #fee8dd 5px 5px 10px;
+        background: linear-gradient(to right top, #fee8dd, #feebde, #feefe0, #fdf2e2, #fdf5e5);
+        ;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .cross {
+            text-align: right;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .pwdDisplay {
+            $input-padding: 10px;
+            padding: $input-padding;
+            width: 80%;
+            max-width: 500px;
+            height: 25px;
+            // background: rgba(255, 255, 255, 0.4);
+            // border: 1px solid #444444;
+            border-radius: 5px;
+            margin-left: 20px;
+            background: rgba(239, 239, 239, 0.048);
+            box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            >img {
+                cursor: pointer;
+            }
+
+            input {
+                border: none;
+                outline: none;
+                background: transparent;
+                width: calc(100% - 2 * $input-padding);
+                font-size: 15px;
+            }
+
+        }
+
+        .options {
+            margin-top: 20px;
+            width: 80%;
+        }
+
+        .option {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+            >span{
+                flex: 0 0 100px;
+            }
+
+            .optInput>input {
+                $input-padding: 10px;
+                padding: $input-padding;
+                border: none;
+                outline: none;
+                border-radius: 5px;
+                background: rgba(239, 239, 239, 0.048);
+                box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+                backdrop-filter: blur(5px);
+                width: 58px;
+                font-size: 15px;
+            }
+
+            .optBtns {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: center;
+                // margin-left: 10px;
+                width:100%;
+
+                span {
+                    display: inline-block;
+                    width: 70px;
+                    height: 40px;
+                    margin-left: 20px;
+                    margin-top: 20px;
+                    border-radius: 5px;
+                    text-align: center;
+                    border: #feebde 1px solid;
+                    box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+                    backdrop-filter: blur(5px);
+                    cursor: pointer;
+                    line-height: 40px;
+
+                    :active{
+                        transform: scale(0.9);
+                        transition: all 0.2s ease-in-out;
+                    }
+                }
+
+                .actBtn{
+                    box-shadow: 0px 4px 25px rgb(255, 255, 255);
+                    color: #000;
+                }
+            }
+        }
+
+        .genBtns{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 200px;
+
+            span{
+                display: inline-block;
+                width: 70px;
+                height: 40px;
+                margin-left: 20px;
+                margin-top: 20px;
+                border-radius: 5px;
+                text-align: center;
+                border: #feebde 1px solid;
+                box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+                backdrop-filter: blur(5px);
+                cursor: pointer;
+                line-height: 40px;
+
+                :active{
+                    transform: scale(0.9);
+                    transition: all 0.2s ease-in-out;
+                }
+            }
+        }
+    }
+}
+
+.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

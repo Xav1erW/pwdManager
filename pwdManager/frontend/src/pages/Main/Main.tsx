@@ -3,10 +3,14 @@ import React, { useState, useEffect, useRef, useContext } from 'react'
 import classNames from 'classnames/bind'
 import api from 'src/utils/api'
 import Topbar from 'src/Components/Topbar/Topbar'
+import PwdGenerator from 'src/Components/PwdGenerator/PwdGenerator'
 import styles from './styles/Main.module.scss'
 import { ThemeContext } from 'src/App'
 import plusIcon from './assets/plus.svg'
 import plusIconDark from './assets/plus_dark.svg'
+import hiddenIcon from './assets/hidden.svg'
+import showIcon from './assets/show.svg'
+import genIcon from './assets/gen.svg'
 
 interface collectionItemTyle {
     name: string,
@@ -48,9 +52,11 @@ interface collectionListTyle extends Array<collectionItemTyle> { }
 interface passwordListTyle extends Array<passwordItemTyle> { }
 
 
-function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, delPassword: Function, colUUID: string }) {
+function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, delPassword: Function, colUUID: string, setShowGen:Function }) {
     const { title, username, password, url, description } = props.info
+    // 显示密码生成器
     const [show, setShow] = useState(false)
+    const [showPwd, setShowPwd] = useState(false)
     const handleAttrChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const attr = e.target.attributes.getNamedItem('name')!.value
         const value = e.target.value
@@ -99,7 +105,9 @@ function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, de
                 <label>
                     <span>密码</span>
                     <div className={styles.inputBox}>
-                        <input type={show ? 'text' : 'password'} value={password} name={'password'} onChange={handleAttrChange} />
+                        <input type={showPwd ? 'text' : 'password'} value={password} name={'password'} onChange={handleAttrChange} />
+                        <img src={genIcon} onClick={() => props.setShowGen(true)} width={'20px'} height={'20px'} />
+                        {showPwd ? <img src={hiddenIcon} onClick={() => {setShowPwd(false)}} width={'20px'} height={'20px'} /> : <img src={showIcon} onClick={() => {setShowPwd(true)}} width={'20px'} height={'20px'} />}
                     </div>
                 </label>
             </div>
@@ -134,6 +142,7 @@ export default function Main() {
     const [pwdInfo, setPwdInfo] = useState<pwdInfo | pwdDetailsInfo>({} as pwdInfo)
     const [chosenCollection, setChosenCollection] = useState('')
     const [chosenPassword, setChosenPassword] = useState('')
+    const [showGren, setShowGren] = useState(true)
     const cx = classNames.bind(styles)
     const {theme, toggleTheme} = useContext(ThemeContext)
     let tempNewUUID = -1
@@ -238,6 +247,10 @@ export default function Main() {
         setPwdInfo({} as pwdInfo)
     }
 
+    const setGenPwd = (pwd:string)=>{
+        setPwdInfo({...pwdInfo,password:pwd})
+    }
+
     return (
         <div className={mainPage}>
             <Topbar />
@@ -266,9 +279,10 @@ export default function Main() {
                     </div>
                 </div>}
                 <div className={styles.contentDisplay}>
-                    {Object.keys(pwdInfo).length === 0 ? null : <div style={{ width: '80%' }}><Password info={pwdInfo} setInfo={setPwdInfo} delPassword={delPassword} colUUID={chosenCollection} /></div>}
+                    {Object.keys(pwdInfo).length === 0 ? null : <div style={{ width: '80%' }}><Password info={pwdInfo} setInfo={setPwdInfo} delPassword={delPassword} colUUID={chosenCollection} setShowGen={setShowGren}/></div>}
                 </div>
             </div>
+            <PwdGenerator show={showGren} setShow={setShowGren} setPwd={setGenPwd}/>
         </div>
     )
 }
