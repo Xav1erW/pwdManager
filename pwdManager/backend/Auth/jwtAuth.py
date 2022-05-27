@@ -14,6 +14,7 @@ from functools import wraps
 with open('config.json', 'r') as f:
     config = json.load(f)
 
+print(config)
 SECRET_KEY = config['backend']['jwt']['secret_key']
 
 logger = logging.getLogger('Auth')

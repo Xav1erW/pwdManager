@@ -369,7 +369,7 @@ export default function Main() {
                     </div>
                 </div>}
                 <div className={styles.contentDisplay}>
-                    {Object.keys(pwdInfo).length === 0 ? null : <div style={{ width: '80%' }}><Password info={pwdInfo} setInfo={setPwdInfo} delPassword={delPassword} colUUID={chosenCollection} setShowGen={setShowGren} /></div>}
+                    {Object.keys(pwdInfo).length === 0 ? null : <div style={{}}><Password info={pwdInfo} setInfo={setPwdInfo} delPassword={delPassword} colUUID={chosenCollection} setShowGen={setShowGren} /></div>}
                 </div>
             </div>
             <PwdGenerator show={showGren} setShow={setShowGren} setPwd={setGenPwd} />
