@@ -330,7 +330,12 @@ class addDBModel(BaseModel):
 def create_db(body:addDBModel):
     name, password = body.name, body.password
     new_db = PwdDataBase([PwdCollection()],**{'name': name})
-    new_file = DataFile('./TestDB/'+name,new_db,False)
+    dbFolder = get_db_path()
+    dbPath = os.path.join(dbFolder, name+".pwdb")
+    if(os.path.exists(dbPath)):
+        return jsonify({'status':'fail','msg':'db already exists'}), 400
+    new_file = DataFile(dbPath,new_db)
+    print('new_file',new_file)
     # new_file.save(password.encode('utf-8'),'./TestDB/'+name,True)
     new_file.save(password.encode('utf-8'))
     return jsonify({'status': 'success', 'data':{'name': name, 'uuid':new_file.getDigest()['uuid']}})

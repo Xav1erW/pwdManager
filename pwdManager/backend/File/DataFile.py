@@ -37,10 +37,14 @@ class DataFile:
         print("initing DataFile")
         if(os.path.exists(self.filePath) and not update):
             raise FileExistsError('the file already exists')
-        else:
-            logger.info('create or update a file')
-            print('create or update a file')
-            self.file = open(self.filePath, 'rb+')
+        elif(not os.path.exists(self.filePath)):
+            logger.info('create a file')
+            # print('create or update a file')
+            self.file = open(self.filePath, 'wb+')
+        elif(update):
+            logger.info('update a file')
+            print('update a file')
+            self.file = open(self.filePath, 'r+b')
     
     @classmethod
     def load(self, filePath:str=None, key:bytes=None):
@@ -118,8 +122,10 @@ class DataFile:
         if(path):
             if(os.path.exists(self.filePath) and not update):
                 raise FileExistsError('the file already exists')
-            file = open(path, 'wb')
+            print('opening file')
+            file = open(path, 'rb+')
         else:
+            print('use the current file')
             file = self.file
         # =========== construct the header ===========
         head = self.HEAD.copy()
@@ -166,6 +172,10 @@ class DataFile:
         # collectionCount: 2 bytes
         # uuid: 22 bytes
         # hash: 32 bytes
+        if(self.file.closed):
+            self.file = open(self.filePath, 'rb+')
+        else:
+            self.file.seek(0)
         rawHead = struct.unpack('=BIH22s32s', self.file.read(offset))
         head['version'] = rawHead[0]
         head['contentOffset'] = rawHead[1]
