@@ -261,27 +261,27 @@ def update_pwd(query:udtModel, body:udtPwdModel):
     pwd = current_db[collectionID][pwdID]
 
     if body.title:
-        pwd['name'] = body.title
+        pwd.name = body.title
     if body.username:
-        pwd['username'] = body.username
+        pwd.username = body.username
     if body.password:
-        if pwd['updateHistory']:
-            pwd['updateHistory'].append(pwd['password'])
+        if pwd.updateHistory:
+            pwd.updateHistory.append(pwd.password)
         else:
-            pwd['updateHistory']=[pwd['password']]
-        pwd['password'] = body.password
+            pwd.updateHistory=[pwd.password]
+        pwd.password = body.password
     if body.url:
-        pwd['url'] = body.url
+        pwd.url = body.url
     if body.description:
-        pwd['description'] = body.description
+        pwd.description = body.description
     if body.autoComplete:
-        pwd['autoComplete'] = body.autoComplete
+        pwd.autoComplete = body.autoComplete
     if body.matchRules:
-        pwd['matchRules'] = body.matchRules
+        pwd.matchRules = body.matchRules
     if body.updateDate:
-        pwd['updateDate'] = body.updateDate
+        pwd.updateDate = body.updateDate
 
-    pwd['updateTime']= time.time()
+    pwd.updateTime= time.time()
     return jsonify({"status":"success"})
 
 class searchpwdModel(BaseModel):
@@ -292,9 +292,10 @@ class searchpwdModel(BaseModel):
 @validate()
 def search_pwd(query:searchpwdModel):
     name = query.name
-    current_db = decryptedDBs.get(session['dbUUID'], None)
+    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)
     res = current_db.search(name)
-    data = [{'name': name, 'uuid': pwd.uuid} for collection in res for pwd in collection.pwdDict.values() if pwd.name == name]
+    # data = [{'name': name, 'uuid': pwd.uuid} for collection in res for pwd in collection.pwdDict.values() if pwd.name == name]
+    data = [{'name': pwd.name, 'uuid': pwd.uuid} for pwd in res]
     return jsonify(data)
 
 
@@ -324,8 +325,9 @@ class addDBModel(BaseModel):
 def create_db(body:addDBModel):
     name, password = body.name, body.password
     new_db = PwdDataBase([PwdCollection()],**{'name': name})
-    new_file = DataFile('./TestDB/'+name,new_db,True)
-    new_file.save(password.encode('utf-8'),'./TestDB/'+name,True)
+    new_file = DataFile('./TestDB/'+name,new_db,False)
+    # new_file.save(password.encode('utf-8'),'./TestDB/'+name,True)
+    new_file.save(password.encode('utf-8'))
     return jsonify({'status': 'success', 'data':{'name': name, 'uuid':new_file.getDigest()['uuid']}})
 
 

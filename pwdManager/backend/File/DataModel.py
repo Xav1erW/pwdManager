@@ -7,6 +7,7 @@
 #     Pwd: inherit dict, which contains the information of a password
 #     DataBase: defines the passwords database structure
 
+from unittest import result
 import shortuuid
 from typing import Iterable, List
 
@@ -76,6 +77,10 @@ class PwdCollection:
         self.name = name
         self.uuid = uuid if uuid else shortuuid.uuid()
         self.pwdDict = {}
+        if pwdList is None:
+            # 空列表，仅作初始化
+            self.idList = []
+            return
         # validation
         for pwd in pwdList:
             if(isinstance(pwd, Pwd)):
@@ -166,7 +171,13 @@ class PwdDataBase:
         '''
         search the pwd by name
         '''
-        result = [self.pwdCollectionDict[colid] for colid in self.pwdCollectionIdList for pwd in self.pwdCollectionDict[colid].pwdDict.values() if pwd.name.find(name) != -1]
+        # result = [self.pwdCollectionDict[colid] for colid in self.pwdCollectionIdList for pwd in self.pwdCollectionDict[colid].pwdDict.values() if pwd.name.find(name) != -1]
+        result = []
+        for colid in self.pwdCollectionIdList:
+            for pwd in self.pwdCollectionDict[colid].pwdDict.values():
+                print(pwd.name)
+                if(pwd.name.find(name) != -1):
+                    result.append(pwd)
         return result
     
     def del_item(self, uuid:str):
