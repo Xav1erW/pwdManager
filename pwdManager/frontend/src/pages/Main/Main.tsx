@@ -62,7 +62,11 @@ function DetailPassword(props: { pwdInfo: pwdDetailsInfo, onEdit: (attrName: str
     const { onEdit, saveChange, closeDetail } = props
     const theme = useContext(ThemeContext)
     const [show, setShow] = useState(false)
-    const [date, setDate] = useState(new Date(updateDate))
+    let initDate:Date|null = new Date(updateDate)
+    if(updateDate === '') {
+        initDate = null
+    }
+    const [date, setDate] = useState(initDate)
     const Date2Str = (date: Date) => {
         // format: yyyy-MM-dd
         const year = date.getFullYear()
@@ -111,7 +115,7 @@ function DetailPassword(props: { pwdInfo: pwdDetailsInfo, onEdit: (attrName: str
             <div className={styles.detailInfo}>
                 <span>历史密码</span>
                 <div className={styles.historyPwd}>
-                    {updateHistory.map((item, index) => {
+                    {updateHistory==[]?null:updateHistory.map((item, index) => {
                         return <span key={index}>{item}</span>
                     })}
                 </div>
@@ -145,7 +149,10 @@ function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, de
                 alert('请至少输入用户名和密码')
                 return
             }
-            api.createPassword(props.info, props.colUUID)
+            api.createPassword(props.info, props.colUUID).then((res)=>{
+                console.log(res)
+                props.setInfo({...props.info, res })
+            })
         }
         else if (props.info.uuid) {
             api.savePassword(props.info, props.colUUID, props.info.uuid)

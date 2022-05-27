@@ -222,7 +222,7 @@ class pwdModel(BaseModel):
 def add_pwd(query:queryModel,body:pwdModel):
     try:
         timestamp = int(time.time())
-        pwd = Pwd(body.password,body.title,**{'username':body.username,'url':body.url,'description':body.description,'updateDate':'','createTime':timestamp,'updateTime':timestamp,'updateHistory':[],'autoComplete':body.autoComplete,'matchRules':body.matchRules})
+        pwd = Pwd(body.password,body.title,**{'username':body.username,'url':body.url,'description':body.description,'updateDate':time.time(),'createTime':timestamp,'updateTime':timestamp,'updateHistory':[],'autoComplete':body.autoComplete,'matchRules':body.matchRules})
         current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)
         collection = current_db[query.uuid]
         collection.add(pwd)
@@ -235,7 +235,18 @@ def add_pwd(query:queryModel,body:pwdModel):
         #     if db == current_db:
         #         db = PwdDataBase(collection_list)
         #         break
-        return jsonify({'state':'success'})
+        title = pwd['name']
+        username = encodeWithRSA(pwd['username'].encode('utf-8'))
+        password = encodeWithRSA(pwd['password'].encode('utf-8'))
+        url = pwd['url']
+        description = pwd['description']
+        updateTime = pwd['updateTime']
+        createTime = pwd['createTime']
+        updateDate = pwd['updateDate']
+        autoComplete = pwd['autoComplete']
+        updateHistory = [encodeWithRSA(his.encode('utf-8')) for his in pwd['updateHistory']]
+        matchRules = pwd['matchRules']
+        return jsonify({'state':'success', 'data':{'title':title,'username':username,'password':password,'url':url,'description':description,'updateTime':updateTime,'createTime':createTime,'updateDate':updateDate,'updateHistory':updateHistory,'autoComplete':autoComplete,'matchRules':matchRules}})
     except Exception as e:
         print(e)
         return jsonify({'msg':"illegal parameters"}), 400
@@ -300,7 +311,7 @@ def search_pwd(query:searchpwdModel):
     current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)
     res = current_db.search(name)
     # data = [{'name': name, 'uuid': pwd.uuid} for collection in res for pwd in collection.pwdDict.values() if pwd.name == name]
-    data = [{'name': pwd.name, 'uuid': pwd.uuid} for pwd in res]
+    data = [{'name': pwd[0].name, 'pwdID': pwd[0].uuid, 'colID':pwd[1]} for pwd in res]
     return jsonify(data)
 
 

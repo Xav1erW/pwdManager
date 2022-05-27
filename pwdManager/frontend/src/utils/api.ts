@@ -40,8 +40,18 @@ interface pwdDetailsResponse {
     matchRules: string[], //url list
 }
 
+interface pwdSearchResponse{
+    pwdID:string,
+    name:string,
+    colID:string,
+}[]
+
 interface pwdUpdateRequest extends pwdResponse {}
 interface pwdUpdateRequestDetail extends pwdDetailsResponse {}
+interface pwdUpdateResponse {
+    status: string,
+    data: pwdDetailsResponse
+}
 
 const keys = generateKeys();
 const MyPublicKey = keys.publicKey;
@@ -203,12 +213,15 @@ export class Api {
         }
     }
 
-    async createPassword(password: pwdUpdateRequest, colUUID:string): Promise<any> {
+    async createPassword(password: pwdUpdateRequest, colUUID:string): Promise<pwdUpdateResponse> {
         const encryptedPassword = encrypt(password.password, this.serverPublicKey)
         const encryptedUsername = encrypt(password.username, this.serverPublicKey)
         const response = await this.client.post(`pwd/create?uuid=${colUUID}`, {...password, username: encryptedUsername, password: encryptedPassword})
         if (response.status === 200) {
-            return response.data
+            console.log(response.data)
+            const username = decrypt(response.data.data.username, this.privateKey)
+            const password = decrypt(response.data.data.password, this.privateKey)
+            return {...response.data.data, username, password}
         }
         else {
             throw new Error(response.status.toString())
@@ -217,6 +230,16 @@ export class Api {
 
     async deletePassword(passwordUUID: string, collectionID:string): Promise<any> {
         const response = await this.client.get(`/api/pwd/del?pwdID=${passwordUUID}&colID=${collectionID}`)
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            throw new Error(response.status.toString())
+        }
+    }
+
+    async searchPassword(keyword: string): Promise<pwdSearchResponse> {
+        const response = await this.client.get(`/api/search?name=${keyword}`)
         if (response.status === 200) {
             return response.data
         }
