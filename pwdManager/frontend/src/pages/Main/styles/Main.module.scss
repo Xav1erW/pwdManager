@@ -5,172 +5,352 @@
     width: 100%;
     min-height: 100vh;
     min-width: 700px;
+
+    .mainContent {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .mainContent>div:nth-last-child(2){
+        // 最后一个导航栏右上圆角
+        border-radius: 0 20px 0 0;
+    }
+
+    .nav {
+        flex: 1 0 12%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: $color-black;
+        height: calc(100vh - $topbar-height);
+        min-width: 150px;
+        overflow-y: auto;
+        max-width: 200px;
+
+        ::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: $backgroundColor3;
+        }
+    }
+
+    .contentDisplay {
+        flex: 9 0 auto;
+    }
+
+    .collectionNav {
+        background: $backgroundColor2;
+    }
+
+    .passwordNav {
+        background: $loginBg;
+    }
+
+    .navItem {
+        display: block;
+        // padding: 10px;
+        text-align: center;
+        min-height: 50px;
+        line-height: 50px;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .navItem:hover {
+
+        background: rgba(247, 212, 129, 0.3);
+        background: linear-gradient(to right, #FFFFFF 0%, #FDF3DB 30%, #FDF3DB 70%, #FFFFFF 100%), $color-white;
+        // box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(5px);
+    }
+
+    .navItem>span {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .navItem::after {
+        content: '';
+        display: block;
+        width: 85%;
+        margin-left: 7.5%;
+        height: 1px;
+        background: #FBA87F;
+        // margin-top: 10px;
+    }
+
+    .navItem:nth-last-child(1)::after {
+        display: none;
+    }
+
+    .plusIcon {
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    // password
+
+    .password {
+        display: flex;
+        flex-direction: column;
+        // align-items: center;
+        // justify-content: center;
+        height: calc(100vh - $topbar-height);
+        overflow-y: auto;
+
+        .editable {
+            width: 80%;
+            margin-bottom: 20px;
+            margin: 10px auto;
+
+            label {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                align-items: center;
+                justify-content: center;
+
+                span {
+                    width: 70px;
+                    text-align: right;
+                }
+            }
+
+            .inputBox {
+                $input-padding: 10px;
+                padding: $input-padding;
+                width: 100%;
+                max-width: 500px;
+                // background: rgba(255, 255, 255, 0.4);
+                // border: 1px solid #444444;
+                border-radius: 5px;
+                margin-left: 20px;
+                background: rgba(239, 239, 239, 0.048);
+                box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+                backdrop-filter: blur(5px);
+                display: flex;
+                flex-direction: row;
+
+                input {
+                    border: none;
+                    outline: none;
+                    background: transparent;
+                    width: calc(100% - 2 * $input-padding);
+                    font-size: 15px;
+                }
+
+                >img {
+                    cursor: pointer;
+                }
+
+                >img:nth-child(2) {
+                    margin-right: 10px;
+                }
+            }
+
+            .textareBox {
+                $input-padding: 10px;
+                padding: $input-padding;
+                width: 100%;
+                max-width: 500px;
+                height: 200px;
+                // background: rgba(255, 255, 255, 0.4);
+
+                // border: 1px solid #EFEFEF;
+                // border: 1px solid #444444;
+                border-radius: 5px;
+                margin-left: 20px;
+                background: rgba(239, 239, 239, 0.048);
+                box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+                backdrop-filter: blur(5px);
+
+
+                textarea {
+                    width: 100%;
+                    height: 100%;
+                    background: transparent;
+                    border: none;
+                    outline: none;
+                    resize: none;
+                    font-family: 'Roboto';
+                }
+            }
+        }
+
+        input {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 80%;
+        }
+
+        .title {
+            margin-left: 100px;
+            margin-top: 5%;
+
+            input {
+                color: $color-black;
+                font-size: 23px;
+                line-height: 24px;
+                height: 24px;
+            }
+        }
+
+        .des>label {
+            align-items: flex-start;
+        }
+
+        .btns {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
+        .btn {
+            display: block;
+            margin: 10px 20px;
+            width: 80px;
+            text-align: center;
+            height: 40px;
+            background: $btnColor;
+            border-radius: 5px;
+            color: $color-white;
+            font-size: 15px;
+            line-height: 40px;
+            cursor: pointer;
+
+            &:active {
+                transform: scale(0.95);
+                transition: all 0.05s ease-in-out;
+                box-shadow: none;
+            }
+        }
+    }
 }
 
-.mainContent {
-    display: flex;
-    flex-direction: row;
+.mainPage.dark {
+    background: $backgroundColorDark;
+    color: $color-white;
+
+    .collectionNav {
+        background: linear-gradient(0deg, $backgroundColorDark 0%, rgba(16, 16, 22, 1) 100%);
+    }
+
+    .passwordNav {
+        background: linear-gradient(0deg, $backgroundColorDark 0%, rgba(27, 28, 39, 1) 100%);
+    }
+
+    .navItem {
+        color: $color-white;
+
+    }
+
+    .navItem:hover {
+        background: rgba(207, 207, 207, 0.35);
+        backdrop-filter: blur(5px);
+    }
+
+    .navItem::after {
+        content: '';
+        display: block;
+        width: 85%;
+        margin-left: 7.5%;
+        height: 1px;
+        background: $btnColorDark;
+        // margin-top: 10px;
+    }
 }
 
-.nav {
-    flex: 1 0 12%;
+.password.dark {
+    .title>input {
+        color: $dark-title-color;
+    }
+
+    .inputBox>input {
+        color: $color-white
+    }
+
+    .textareBox>textarea {
+        color: $color-white
+    }
+
+    .btn {
+        background: $btnColorDark;
+        color: $color-white;
+    }
+}
+
+
+
+
+.detail-password {
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: $color-white;
-    height: calc(100vh - $topbar-height);
-    overflow-y: auto;
-    max-width: 200px;
-
-    ::-webkit-scrollbar {
-        width: 3px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: $backgroundColor3;
-    }
-}
-
-.contentDisplay {
-    flex: 9 0 auto;
-}
-
-.collectionNav {
-    background: $backgroundColor3;
-}
-
-.passwordNav {
-    background: $backgroundColor2;
-}
-
-.navItem {
-    display: block;
-    // padding: 10px;
-    text-align: center;
-    min-height: 50px;
-    line-height: 50px;
-    width: 100%;
-    cursor: pointer;
-}
-
-.navItem>span {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-
-.navItem::after {
-    content: '';
-    display: block;
-    width: 85%;
-    margin-left: 7.5%;
-    height: 1px;
-    background: $color-gray;
-    // margin-top: 10px;
-}
-
-.navItem:nth-last-child(1)::after {
-    display: none;
-}
-
-
-// password
-
-.password {
-    display: flex;
-    flex-direction: column;
-    // align-items: center;
-    // justify-content: center;
+    justify-content: center;
     height: calc(100vh - $topbar-height);
     overflow-y: auto;
 
-    .editable {
-        width: 80%;
+    .detailInfo {
+        width: 60%;
         margin-bottom: 20px;
         margin: 10px auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
 
-        label {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            align-items: center;
-
-            span{
-                width: 70px;
-                text-align: right;
-            }
+        >*:nth-child(1) {
+            flex: 1;
+            text-align: right;
         }
 
-        .inputBox {
-            $input-padding: 10px;
-            padding: $input-padding;
-            width: 100%;
-            max-width: 500px;
-            background: rgba(255, 255, 255, 0.4);
-            border: 1px solid #444444;
+        >*:nth-child(2) {
+            flex: 2.5;
+            margin-left: 50px;
+        }
+
+        >span:nth-last-child(1) {
+            display: block;
+            line-height: 35px;
+            height: 35px;
             border-radius: 5px;
-            margin-left: 20px;
-
-            input {
-                border: none;
-                outline: none;
-                background: transparent;
-                width: calc(100% - 2 * $input-padding);
-                font-size: 15px;
-            }
+            background: rgba(239, 239, 239, 0.048);
+            box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(5px);
+            padding: 2px 8px;
         }
-
-        .textareBox{
-            $input-padding: 10px;
-            padding: $input-padding;
-            width: 100%;
-            max-width: 500px;
+        .historyPwd{
             height: 200px;
-            background: rgba(255, 255, 255, 0.4);
-            border: 1px solid #444444;
+            display: block;
+            line-height: 35px;
             border-radius: 5px;
-            margin-left: 20px;
-            
-            textarea{
-                width: 100%;
-                height: 100%;
-                background: transparent;
-                border: none;
-                outline: none;
-                resize: none;
-            }
+            background: rgba(239, 239, 239, 0.048);
+            background: rgba(239, 239, 239, 0.048);
+            box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(5px);
+
+            overflow-y: auto;
+            padding: 2px 8px;
+
         }
     }
-
-    input {
-        border: none;
-        outline: none;
-        background: transparent;
-        width: 80%;
+    .btns {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
     }
 
-    .title {
-        margin-left: 100px;
-        margin-top: 5%;
-        input {
-            color: $color-black;
-            font-size: 23px;
-            line-height: 24px;
-            height: 24px;
-        }
-    }
-
-    .des>label{
-        align-items: flex-start;
-    }
-
-    .btn{
+    .btn {
         display: block;
-        margin: 10px auto;
+        margin: 10px 20px;
         width: 80px;
         text-align: center;
         height: 40px;
@@ -180,5 +360,22 @@
         font-size: 15px;
         line-height: 40px;
         cursor: pointer;
+
+        &:active {
+            transform: scale(0.95);
+            transition: all 0.05s ease-in-out;
+            box-shadow: none;
+        }
+    }
+
+}
+
+.detail-password.dark{
+    input{
+        color: $color-white;
+    }
+    .btn {
+        background: $btnColorDark;
+        color: $color-white;
     }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, createContext, useState, EffectCallback } from 'react'
+import React, { useEffect, createContext, useState, EffectCallback, ReactChild } from 'react'
 import { generateKeys } from 'src/utils/rsa'
 import shortUUID from 'short-uuid'
 import Login from './pages/Login/Login'
@@ -9,13 +9,13 @@ import useProxy from './setupProxy'
 const uuid = shortUUID.generate()
 
 // generate rsa key pair
-const keys = generateKeys()
-const publicKey = keys.publicKey
-const privateKey = keys.privateKey
+// const keys = generateKeys()
+// const publicKey = keys.publicKey
+// const privateKey = keys.privateKey
 
 export interface authContextType {
     uuid: string
-    privateKey: string
+    // privateKey: string
     auth: {
         jwt: string
         publicKey: string
@@ -27,32 +27,47 @@ export interface authContextType {
     setDbInfo: (dbInfo: { dbName: string, dbUUID: string }) => void
 }
 
-const initialContext:authContextType = {
+const initialContext: authContextType = {
     uuid,
-    privateKey,
-    auth:{jwt:'', publicKey:''},
+    // privateKey,
+    auth: { jwt: '', publicKey: '' },
     dbInfo: {
         dbUUID: '',
         dbName: '',
     },
-    setDbInfo: () => {},
+    setDbInfo: () => { },
 }
 
 export const AuthContext = createContext(initialContext)
+
 
 interface dbInfoTyle {
     dbUUID: string,
     dbName: string,
 }
 
+export const ThemeContext = createContext({theme:'dark', toggleTheme: () => {}})
+function ThemeProvider ({ children }:React.PropsWithChildren<{}>) {
+    const [theme, setTheme] = useState('light')
+    const toggleTheme = () => {
+        setTheme(theme === 'light' ? 'dark' : 'light')
+    }
+    return (
+        <ThemeContext.Provider value={{theme, toggleTheme}}>
+            {children}
+        </ThemeContext.Provider>
+    )
+}
+
+
 function App() {
-    const [auth, setAuth] = useState({jwt:'', publicKey:''})
+    const [auth, setAuth] = useState({ jwt: '', publicKey: '' })
+    
+    const [dbInfo, setDbInfo] = useState<dbInfoTyle>({ dbUUID: '', dbName: '' })
 
-    const [dbInfo, setDbInfo] = useState<dbInfoTyle>({dbUUID:'', dbName:''})
-
-    useEffect(()=>{
+    useEffect(() => {
         const getData = async () => {
-            const data = await api.BeforeLogin(uuid, publicKey)
+            const data = await api.BeforeLogin(uuid)
             return data
         }
         getData().then((data: any) => {
@@ -62,14 +77,16 @@ function App() {
     }, [])
     return (
         <div>
-            <AuthContext.Provider value={{ uuid, privateKey, auth:auth, dbInfo: dbInfo, setDbInfo }}>
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/" element={<Login />} />
-                        <Route path="/home" element={<Main />} />
-                    </Routes>
-                </BrowserRouter>
-            </AuthContext.Provider>
+            <ThemeProvider>
+                <AuthContext.Provider value={{ uuid, auth: auth, dbInfo: dbInfo, setDbInfo }}>
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path="/" element={<Login />} />
+                            <Route path="/home" element={<Main />} />
+                        </Routes>
+                    </BrowserRouter>
+                </AuthContext.Provider>
+            </ThemeProvider>
         </div>
     )
 }

@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-import { encrypt, decrypt } from "./rsa";
+import { encrypt, decrypt, generateKeys } from "./rsa";
 
 interface CollectionResponse {
     collectionList: {
@@ -43,11 +43,15 @@ interface pwdDetailsResponse {
 interface pwdUpdateRequest extends pwdResponse {}
 interface pwdUpdateRequestDetail extends pwdDetailsResponse {}
 
+const keys = generateKeys();
+const MyPublicKey = keys.publicKey;
+const MyPrivateKey = keys.privateKey;
+
 export class Api {
     authToken: string = "";
     baseUrl: string = "/api/";
     client: AxiosInstance;
-    private privateKey: string = ""
+    private privateKey: string = MyPrivateKey
     private serverPublicKey: string = ""
     constructor(baseUrl?: string) {
         this.client = axios.create({
@@ -79,10 +83,10 @@ export class Api {
         }
     }
 
-    async BeforeLogin(uuid: string, pubKey: string): Promise<any> {
+    async BeforeLogin(uuid: string): Promise<any> {
         const response = await this.post('auth', {
             'sessionID': uuid,
-            'publicKey': pubKey
+            'publicKey': MyPublicKey
         })
         const jwt = response.data['jwt']
         const publicKey = response.data["public_key"]
@@ -187,8 +191,32 @@ export class Api {
         }
     }
 
-    async savePassword(password: pwdUpdateRequest|pwdUpdateRequestDetail): Promise<any> {
-        const response = await this.client.post('pwd/info', password)
+    async savePassword(password: pwdUpdateRequest|pwdUpdateRequestDetail, colUUID:string, pwdID:string): Promise<any> {
+        const encryptedPassword = encrypt(password.password, this.serverPublicKey)
+        const encryptedUsername = encrypt(password.username, this.serverPublicKey)
+        const response = await this.client.post(`pwd/update?pwdID=${pwdID}&collectionID=${colUUID}`, {...password, username: encryptedUsername, password: encryptedPassword})
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            throw new Error(response.status.toString())
+        }
+    }
+
+    async createPassword(password: pwdUpdateRequest, colUUID:string): Promise<any> {
+        const encryptedPassword = encrypt(password.password, this.serverPublicKey)
+        const encryptedUsername = encrypt(password.username, this.serverPublicKey)
+        const response = await this.client.post(`pwd/create?uuid=${colUUID}`, {...password, username: encryptedUsername, password: encryptedPassword})
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            throw new Error(response.status.toString())
+        }
+    }
+
+    async deletePassword(passwordUUID: string, collectionID:string): Promise<any> {
+        const response = await this.client.get(`/api/pwd/del?pwdID=${passwordUUID}&colID=${collectionID}`)
         if (response.status === 200) {
             return response.data
         }

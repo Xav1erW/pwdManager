@@ -4,15 +4,14 @@ from flask_cors import CORS
 from Lib.flask_pydantic import validate
 from pydantic import BaseModel
 from Auth.jwtAuth import useJWT,tokenGen
-from Auth.RSA import useRSA
+from Auth.RSA import useRSA, encodeWithRSA
 from File.DataModel import PwdDataBase,PwdCollection,Pwd
 from File.DataFile import DataFile
 from typing import List, Optional
 import time
 import os
 
-
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/', static_folder='../gui')
 # CORS(app, supports_credentials=True, origins=['http://localhost:3000'], allow_headers=['Content-Type', 'Authentication', 'dbUUID'], expose_headers=['Authentication'])
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -52,9 +51,15 @@ FileList = [
 # db = DataFile.load('./TestDB/test.pwdb', key='test_db'.encode('utf-8'))
 # 找密码文件也在TestDB下找
 # 读取的时候用os遍历目录，通过Digest读取uuid
+def get_db_path():
+    dbfolder = os.path.join(os.path.dirname(__file__), 'TestDB')
+    return dbfolder
+
 def get_db_list():
-    dbfiles = os.listdir('./TestDB')
-    db_list = [{"uuid":DataFile('./TestDB/'+dbfile, update=True).getDigest()['uuid'], "name":dbfile.split('.')[0], "db": DataFile('./TestDB/'+dbfile, update=True)} for dbfile in dbfiles]
+    dbFolder = get_db_path()
+    print(dbFolder)
+    dbfiles = os.listdir(dbFolder)
+    db_list = [{"uuid":DataFile(os.path.join(dbFolder, dbfile) , update=True).getDigest()['uuid'], "name":dbfile.split('.')[0], "db": DataFile(os.path.join(dbFolder, dbfile), update=True)} for dbfile in dbfiles]
     return db_list
 current_db:PwdDataBase = None
 # current_collection = collection_list[0]
@@ -185,8 +190,8 @@ def get_pwd(query:detailModel):
     pwd = current_db[colID][uuid]
 
     title = pwd['name']
-    username = pwd['username']
-    password = pwd['password']
+    username = encodeWithRSA(pwd['username'].encode('utf-8'))
+    password = encodeWithRSA(pwd['password'].encode('utf-8'))
     url = pwd['url']
     description = pwd['description']
     if not query.detail:
@@ -196,7 +201,7 @@ def get_pwd(query:detailModel):
         createTime = pwd['createTime']
         updateDate = pwd['updateDate']
         autoComplete = pwd['autoComplete']
-        updateHistory = pwd['updateHistory']
+        updateHistory = [encodeWithRSA(his.encode('utf-8')) for his in pwd['updateHistory']]
         matchRules = pwd['matchRules']
         return jsonify({'title':title,'username':username,'password':password,'url':url,'description':description,'updateTime':updateTime,'createTime':createTime,'updateDate':updateDate,'updateHistory':updateHistory,'autoComplete':autoComplete,'matchRules':matchRules})
 

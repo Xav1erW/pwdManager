@@ -1,9 +1,16 @@
-import React from 'react'
-
+import React, {useContext} from 'react'
+import { ThemeContext } from 'src/App'
+import classNames from 'classnames/bind'
 import styles from './styles/Topbar.module.scss'
 export default function Topbar() {
+    const theme = useContext(ThemeContext)
+    const MyClassName = classNames.bind(styles)
+    const topbar = MyClassName({
+        topbar: true,
+        dark: theme.theme === 'dark'
+    })
     return (
-        <div className={styles.topbar}>
+        <div className={topbar}>
             <div className={styles.options}>
                 <span className={styles.option}>打开(O)</span>
                 <span className={styles.option}>新建(N)</span>
@@ -14,6 +21,7 @@ export default function Topbar() {
             <div className={styles.search}>
                 <input type="text" placeholder="搜索" />
             </div>
+            <span className={styles.changeTheme} onClick={()=>{theme.toggleTheme()}}>{theme.theme === 'light'?"🌙":"\u2600"}</span>
         </div>
     )
 }

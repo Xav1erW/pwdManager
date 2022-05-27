@@ -56,6 +56,6 @@ def encodeWithRSA(data:bytes)->str:
     encode the data with RSA public key(get from session pool)
     """
     publicKey = session['publicKey']
-    cipher = PKCS1_v1_5.new(publicKey)
+    cipher = PKCS1_v1_5.new(RSA.import_key(publicKey))
     dataEncrypted = cipher.encrypt(data)
-    return base64.b64encode(dataEncrypted).decode()
+    return base64.b64encode(dataEncrypted).decode('utf-8')
