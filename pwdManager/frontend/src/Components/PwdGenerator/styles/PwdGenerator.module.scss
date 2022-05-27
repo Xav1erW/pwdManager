@@ -1,3 +1,5 @@
+@import 'variables.scss';
+
 .Pwd_Generator {
     height: 100%;
     width: 100%;
@@ -36,7 +38,7 @@
             border-radius: 5px;
             margin-left: 20px;
             background: rgba(239, 239, 239, 0.048);
-            box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+            box-shadow: 4px 4px 25px rgba(0, 0, 0, 0.25);
             backdrop-filter: blur(5px);
             display: flex;
             flex-direction: row;
@@ -67,7 +69,7 @@
             align-items: center;
             justify-content: center;
 
-            >span{
+            >span {
                 flex: 0 0 100px;
             }
 
@@ -78,7 +80,7 @@
                 outline: none;
                 border-radius: 5px;
                 background: rgba(239, 239, 239, 0.048);
-                box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+                box-shadow: 4px 4px 25px rgba(0, 0, 0, 0.25);
                 backdrop-filter: blur(5px);
                 width: 58px;
                 font-size: 15px;
@@ -91,7 +93,7 @@
                 align-items: center;
                 justify-content: center;
                 // margin-left: 10px;
-                width:100%;
+                width: 100%;
 
                 span {
                     display: inline-block;
@@ -102,31 +104,31 @@
                     border-radius: 5px;
                     text-align: center;
                     border: #feebde 1px solid;
-                    box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+                    box-shadow: 4px 4px 25px rgba(0, 0, 0, 0.25);
                     backdrop-filter: blur(5px);
                     cursor: pointer;
                     line-height: 40px;
 
-                    :active{
+                    :active {
                         transform: scale(0.9);
                         transition: all 0.2s ease-in-out;
                     }
                 }
 
-                .actBtn{
-                    box-shadow: 0px 4px 25px rgb(255, 255, 255);
+                .actBtn {
+                    box-shadow: 4px 4px 25px rgb(255, 255, 255);
                     color: #000;
                 }
             }
         }
 
-        .genBtns{
+        .genBtns {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
             width: 200px;
 
-            span{
+            span {
                 display: inline-block;
                 width: 70px;
                 height: 40px;
@@ -135,14 +137,15 @@
                 border-radius: 5px;
                 text-align: center;
                 border: #feebde 1px solid;
-                box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
+                box-shadow: 4px 4px 25px rgba(0, 0, 0, 0.25);
                 backdrop-filter: blur(5px);
                 cursor: pointer;
                 line-height: 40px;
 
-                :active{
-                    transform: scale(0.9);
-                    transition: all 0.2s ease-in-out;
+                &:active {
+                    transform: scale(0.95);
+                    transition: all 0.05s ease-in-out;
+                    box-shadow: none;
                 }
             }
         }
@@ -153,4 +156,51 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+
+.dark {
+    .generatorPannel {
+        background: $backgroundColorDark;
+        color: $dark-font-color;
+        box-shadow: #171822 5px 5px 10px;
+
+        .option {
+            .optInput>input {
+                color: $dark-font-color;
+            }
+
+            .optBtns {
+                span {
+                    border: #1b1c28 2px solid;
+                    box-shadow: 4px 4px 5px #171822;
+                }
+
+                .actBtn {
+                    color: $dark-font-color;
+                    box-shadow: none;
+                }
+            }
+
+
+        }
+
+        .genBtns {
+            >span {
+                border: #1b1c28 2px solid;
+                box-shadow: 4px 4px 5px #171822;
+
+                &:active {
+                    box-shadow: none;
+                }
+            }
+
+        }
+
+        .pwdDisplay{
+            input {
+                color: $dark-font-color;
+            }
+        }
+    }
 }

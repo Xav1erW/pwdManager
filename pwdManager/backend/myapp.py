@@ -4,7 +4,7 @@ from flask_cors import CORS
 from Lib.flask_pydantic import validate
 from pydantic import BaseModel
 from Auth.jwtAuth import useJWT,tokenGen
-from Auth.RSA import useRSA
+from Auth.RSA import useRSA, encodeWithRSA
 from File.DataModel import PwdDataBase,PwdCollection,Pwd
 from File.DataFile import DataFile
 from typing import List, Optional
@@ -190,8 +190,8 @@ def get_pwd(query:detailModel):
     pwd = current_db[colID][uuid]
 
     title = pwd['name']
-    username = pwd['username']
-    password = pwd['password']
+    username = encodeWithRSA(pwd['username'].encode('utf-8'))
+    password = encodeWithRSA(pwd['password'].encode('utf-8'))
     url = pwd['url']
     description = pwd['description']
     if not query.detail:
@@ -201,7 +201,7 @@ def get_pwd(query:detailModel):
         createTime = pwd['createTime']
         updateDate = pwd['updateDate']
         autoComplete = pwd['autoComplete']
-        updateHistory = pwd['updateHistory']
+        updateHistory = [encodeWithRSA(his.encode('utf-8')) for his in pwd['updateHistory']]
         matchRules = pwd['matchRules']
         return jsonify({'title':title,'username':username,'password':password,'url':url,'description':description,'updateTime':updateTime,'createTime':createTime,'updateDate':updateDate,'updateHistory':updateHistory,'autoComplete':autoComplete,'matchRules':matchRules})
 
