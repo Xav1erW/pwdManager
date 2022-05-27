@@ -67,11 +67,60 @@
     input::-webkit-input-placeholder {
         color: $color-gray;
     }
+    .searchList{
+        position: absolute;
+        top: 40px;
+        left: 0;
+        width: 60%;
+        height: fit-content;
+        // height: calc(100% - 50px);
+        background: #fcbea8;
+        backdrop-filter: blur(150px);
+        border-radius: 10px;
+        overflow: auto;
+        z-index: 1;
+        overflow-x: hidden;
+
+        >span{
+            padding: 10px;
+            display: block;
+            width: 100%;
+            cursor: pointer;
+            &:hover{
+                background: rgba(196, 196, 196, 0.4);
+            }
+            overflow-x: hidden;
+        }
+    }
 }
 
 .topbar.dark{
 
     .option{
         color: $dark-title-color;
+    }
+    .searchList{
+
+        background: #353d6c;
+
+        >span{
+            padding: 10px;
+            display: block;
+            width: 100%;
+            cursor: pointer;
+            &:hover{
+                background: rgba(196, 196, 196, 0.4);
+            }
+            overflow-x: hidden;
+        }
+    }
+
+    .search{
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(150px);
+        border-radius: 10px;
+        input{
+            color: $color-white;
+        }
     }
 }

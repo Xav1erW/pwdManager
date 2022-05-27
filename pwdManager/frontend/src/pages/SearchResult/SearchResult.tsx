@@ -37,7 +37,7 @@ export default function SearchResult() {
             setLocation(`${ColName!.name}/${PwdName}`)
         }
         getDB()
-    }, [params])
+    }, [params, pwdInfo])
 
     const MyClassName = classNames.bind(styles)
     const searchStyle = MyClassName({

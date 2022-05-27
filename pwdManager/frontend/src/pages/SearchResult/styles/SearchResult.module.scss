@@ -20,5 +20,23 @@
         top: 30px;
         left: 30px;
         color: #3178c6;
+        cursor: pointer;
     }
+}
+
+.searchResult.dark{
+    background: $backgroundColorDark;
+
+    span{
+        color: $color-white;
+    }
+    .location{
+
+        color: #3178c6;
+    }
+
+    .back{
+        color: #3178c6;
+    }
+
 }
