@@ -9,13 +9,13 @@ import useProxy from './setupProxy'
 const uuid = shortUUID.generate()
 
 // generate rsa key pair
-const keys = generateKeys()
-const publicKey = keys.publicKey
-const privateKey = keys.privateKey
+// const keys = generateKeys()
+// const publicKey = keys.publicKey
+// const privateKey = keys.privateKey
 
 export interface authContextType {
     uuid: string
-    privateKey: string
+    // privateKey: string
     auth: {
         jwt: string
         publicKey: string
@@ -29,7 +29,7 @@ export interface authContextType {
 
 const initialContext: authContextType = {
     uuid,
-    privateKey,
+    // privateKey,
     auth: { jwt: '', publicKey: '' },
     dbInfo: {
         dbUUID: '',
@@ -67,7 +67,7 @@ function App() {
 
     useEffect(() => {
         const getData = async () => {
-            const data = await api.BeforeLogin(uuid, publicKey)
+            const data = await api.BeforeLogin(uuid)
             return data
         }
         getData().then((data: any) => {
@@ -78,7 +78,7 @@ function App() {
     return (
         <div>
             <ThemeProvider>
-                <AuthContext.Provider value={{ uuid, privateKey, auth: auth, dbInfo: dbInfo, setDbInfo }}>
+                <AuthContext.Provider value={{ uuid, auth: auth, dbInfo: dbInfo, setDbInfo }}>
                     <BrowserRouter>
                         <Routes>
                             <Route path="/" element={<Login />} />

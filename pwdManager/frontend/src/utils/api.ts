@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-import { encrypt, decrypt } from "./rsa";
+import { encrypt, decrypt, generateKeys } from "./rsa";
 
 interface CollectionResponse {
     collectionList: {
@@ -43,11 +43,15 @@ interface pwdDetailsResponse {
 interface pwdUpdateRequest extends pwdResponse {}
 interface pwdUpdateRequestDetail extends pwdDetailsResponse {}
 
+const keys = generateKeys();
+const MyPublicKey = keys.publicKey;
+const MyPrivateKey = keys.privateKey;
+
 export class Api {
     authToken: string = "";
     baseUrl: string = "/api/";
     client: AxiosInstance;
-    private privateKey: string = ""
+    private privateKey: string = MyPrivateKey
     private serverPublicKey: string = ""
     constructor(baseUrl?: string) {
         this.client = axios.create({
@@ -79,10 +83,10 @@ export class Api {
         }
     }
 
-    async BeforeLogin(uuid: string, pubKey: string): Promise<any> {
+    async BeforeLogin(uuid: string): Promise<any> {
         const response = await this.post('auth', {
             'sessionID': uuid,
-            'publicKey': pubKey
+            'publicKey': MyPublicKey
         })
         const jwt = response.data['jwt']
         const publicKey = response.data["public_key"]
