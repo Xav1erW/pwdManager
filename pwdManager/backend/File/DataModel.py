@@ -171,7 +171,9 @@ class PwdDataBase:
         '''
         search the pwd by name
         '''
-        result = [(self.pwdCollectionDict[colid], colid) for colid in self.pwdCollectionIdList for pwd in self.pwdCollectionDict[colid].pwdDict.values() if pwd.name.find(name) != -1]
+        if name == '':
+            return []
+        result = [(pwd, colid) for colid in self.pwdCollectionIdList for pwd in self.pwdCollectionDict[colid].pwdDict.values() if pwd.name.find(name) != -1]
         # result = []
         # for colid in self.pwdCollectionIdList:
         #     for pwd in self.pwdCollectionDict[colid].pwdDict.values():

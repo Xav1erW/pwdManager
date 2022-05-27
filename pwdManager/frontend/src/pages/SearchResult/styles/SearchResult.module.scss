@@ -1,0 +1,24 @@
+@import 'variables.scss';
+
+
+.searchResult{
+    background: $backgroundColor;
+    width: 100%;
+    min-height: 100vh;
+    min-width: 700px;
+    position: relative;
+
+    .location{
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        color: #3178c6;
+    }
+
+    .back{
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        color: #3178c6;
+    }
+}

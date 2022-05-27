@@ -44,7 +44,7 @@ interface pwdSearchResponse{
     pwdID:string,
     name:string,
     colID:string,
-}[]
+}
 
 interface pwdUpdateRequest extends pwdResponse {}
 interface pwdUpdateRequestDetail extends pwdDetailsResponse {}
@@ -229,7 +229,7 @@ export class Api {
     }
 
     async deletePassword(passwordUUID: string, collectionID:string): Promise<any> {
-        const response = await this.client.get(`/api/pwd/del?pwdID=${passwordUUID}&colID=${collectionID}`)
+        const response = await this.client.get(`pwd/del?pwdID=${passwordUUID}&colID=${collectionID}`)
         if (response.status === 200) {
             return response.data
         }
@@ -238,8 +238,8 @@ export class Api {
         }
     }
 
-    async searchPassword(keyword: string): Promise<pwdSearchResponse> {
-        const response = await this.client.get(`/api/search?name=${keyword}`)
+    async searchPassword(keyword: string): Promise<pwdSearchResponse[]> {
+        const response = await this.client.get(`search?name=${keyword}`)
         if (response.status === 200) {
             return response.data
         }

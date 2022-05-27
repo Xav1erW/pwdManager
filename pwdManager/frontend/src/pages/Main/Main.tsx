@@ -27,7 +27,7 @@ interface passwordItemTyle {
     uuid: string
 }
 
-interface pwdInfo {
+export interface pwdInfo {
     title: string,
     username: string,
     password: string,
@@ -36,7 +36,7 @@ interface pwdInfo {
     uuid?: string
 }
 
-interface pwdDetailsInfo {
+export interface pwdDetailsInfo {
     title: string,
     username: string,
     password: string,
@@ -130,7 +130,7 @@ function DetailPassword(props: { pwdInfo: pwdDetailsInfo, onEdit: (attrName: str
 
 
 
-function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, delPassword: Function, colUUID: string, setShowGen: Function }) {
+export function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, delPassword: Function, colUUID: string, setShowGen: Function }) {
     const { title, username, password, url, description } = props.info
     // 显示密码生成器
     const [show, setShow] = useState(false)
