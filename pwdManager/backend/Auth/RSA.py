@@ -15,7 +15,7 @@ from functools import wraps
 with open('config.json', 'r') as f:
     config = json.load(f)
 
-PRIVATE_KEY = RSA.import_key(config['RSA']['private'])
+PRIVATE_KEY = RSA.import_key(config['backend']['RSA']['private'])
 
 logger = logging.getLogger('Auth')
 logger.setLevel(logging.DEBUG)

@@ -15,9 +15,9 @@ app = Flask(__name__, static_url_path='/', static_folder='../gui')
 # CORS(app, supports_credentials=True, origins=['http://localhost:3000'], allow_headers=['Content-Type', 'Authentication', 'dbUUID'], expose_headers=['Authentication'])
 with open('config.json', 'r') as f:
     config = json.load(f)
-app.config['SECRET_KEY'] = config['session']['secret']
+app.config['SECRET_KEY'] = config['backend']['session']['secret']
 
-appPublicKey = config['RSA']['public']
+appPublicKey = config['backend']['RSA']['public']
 
 FileList = [
   {
