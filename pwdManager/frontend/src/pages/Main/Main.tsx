@@ -332,6 +332,59 @@ export default function Main() {
         setPwdInfo(newPwdInfo)
     }
 
+    const addCol = () => {
+        const newCollection = {
+            name: '新合集',
+            uuid: tempNewUUID.toString(),
+            
+        }
+        tempNewUUID -= 1
+        setCollectionList([...collectionList, newCollection])
+    }
+
+    const changeColName = (uuid:string) =>{
+        return (e:React.ChangeEvent<HTMLInputElement>) => {
+            let list = [...collectionList]
+            if(uuid[0] === '-'){
+                // -开头，代表着新建的合集，还未提交到服务器
+
+            }
+            list.forEach(item => {
+                if (item.uuid === uuid) {
+                    item.name = e.target.value
+                }
+            })
+            setCollectionList([...list])
+        }
+    }
+
+    const colKeyPress = (uuid:string)=>{
+        return  (e:React.KeyboardEvent<HTMLInputElement>) => {
+            if(e.key === 'Enter'){
+                if(uuid[0] === '-'){
+                    // -开头，代表着新建的合集，还未提交到服务器
+                    let list = [...collectionList]
+                    const newName = list.filter(item => item.uuid === uuid)[0].name
+                    api.createNewCollection(newName).then((res)=>{
+                        list.forEach(item => {
+                            if (item.uuid === uuid) {
+                                item.name = res.name
+                                item.uuid = res.uuid
+                            }
+                        })
+                    })
+                }
+                else{
+                    let list = [...collectionList]
+                    const newName = list.filter(item => item.uuid === uuid)[0].name
+                    api.updateCollection(uuid, newName).then((res)=>{
+                        console.log(res)
+                    })
+                }
+            }
+        }
+    }
+
     const delPassword = () => {
         api.deletePassword(chosenPassword, chosenCollection)
         setPasswordList(passwordList.filter(item => item.uuid !== chosenPassword))
@@ -351,12 +404,12 @@ export default function Main() {
                     {collectionList.map(item =>
                     (
                         <div className={chosenCollection === item.uuid ? actCollectionItemClass : collectionItemClass} key={item.uuid} onClick={chooseCollection(item.uuid)}>
-                            <span>{item.name}</span>
+                            <input type={'text'} value={item.name} onChange={changeColName(item.uuid)} onKeyDown={colKeyPress(item.uuid)}></input>
                             {/* <hr/> */}
                         </div>
                     ))}
                     <div>
-                        <img width={'20px'} height={'20px'} src={theme === 'dark' ? plusIconDark : plusIcon} alt={'plus'} className={styles.plusIcon} onClick={() => { }} />
+                        <img width={'20px'} height={'20px'} src={theme === 'dark' ? plusIconDark : plusIcon} alt={'plus'} className={styles.plusIcon} onClick={addCol} />
                     </div>
                 </div>
                 {passwordList.length === 0 ? <div className={passwordNavClass}>

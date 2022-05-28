@@ -60,6 +60,15 @@
         line-height: 50px;
         width: 100%;
         cursor: pointer;
+
+        input{
+            background: transparent;
+            color: inherit;
+            border: none;
+            outline: none;
+            font-size: inherit;
+            text-align: center;
+        }
     }
 
     .navItem:hover {
