@@ -151,7 +151,8 @@ export function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Funct
             }
             api.createPassword(props.info, props.colUUID).then((res)=>{
                 console.log(res)
-                props.setInfo({...props.info, res })
+                const newPasswordInfo = res.data
+                props.setInfo({...props.info, ...newPasswordInfo })
             })
         }
         else if (props.info.uuid) {
@@ -294,6 +295,7 @@ export default function Main() {
 
     const chooseCollection = (collectionUUID: string) => {
         return () => {
+            console.log(collectionUUID)
             setChosenCollection(collectionUUID)
             api.getPasswordList(collectionUUID).then(res => {
                 setPasswordList(res.passwordList)
@@ -357,7 +359,11 @@ export default function Main() {
                         <img width={'20px'} height={'20px'} src={theme === 'dark' ? plusIconDark : plusIcon} alt={'plus'} className={styles.plusIcon} onClick={() => { }} />
                     </div>
                 </div>
-                {passwordList.length === 0 ? null : <div className={passwordNavClass}>
+                {passwordList.length === 0 ? <div className={passwordNavClass}>
+                    <div>
+                        <img width={'20px'} height={'20px'} src={theme === 'dark' ? plusIconDark : plusIcon} alt={'plus'} className={styles.plusIcon} onClick={addPwd} />
+                    </div>
+                </div>: <div className={passwordNavClass}>
                     {passwordList.map(item => (
                         <div className={chosenPassword === item.uuid ? actPasswordItemClass : passwordItemClass} key={item.uuid} onClick={choosePassword(item.uuid)}>
                             <span>{item.name}</span>
