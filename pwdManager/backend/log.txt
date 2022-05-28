@@ -1,0 +1,257 @@
+* Serving Flask app 'myapp' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 683-663-949
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+session id JIASXhsybwbDKWQQOV6QJZ
+public key -----BEGIN PUBLIC KEY-----
+MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgGZn9SZo8FhyIktFss7thwPz08bJ
+q2G373tZD5CpeN8qsWw7hW8SgQG9KwvcJxPKArOf9E3CBqV4fLONfN1qtuxrWx8F
+beVLRkiC6sLf6eOA0aV+SyU/gAKnZX3896Ika7DAbRXr6gyalOkrWnjRHa9mWMqy
+y58c5bAS5MoEiqllAgMBAAE=
+-----END PUBLIC KEY-----
+127.0.0.1 - - [28/May/2022 11:10:16] "POST /api/auth HTTP/1.1" 200 -
+F:\programme_design-dev\pwdManager\pwdManager\backend\TestDB
+initing DataFile
+read the file
+initing DataFile
+read the file
+initing DataFile
+read the file
+initing DataFile
+read the file
+127.0.0.1 - - [28/May/2022 11:10:16] "GET /api/fileList HTTP/1.1" 200 -
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTYyOTk0MTYsImlhdCI6MTY1MzcwNzQxNiwiaXNzIjoicHdkTWFuYWdlciIsIm5iZiI6MTY1MzcwNzQxNiwianRpIjoiSklBU1hoc3lid2JES1dRUU9WNlFKWiJ9.sAmSlYBjk_HrMz20DtCTBrVKCpEHSGm-b4dd591Knlc
+password test_db
+F:\programme_design-dev\pwdManager\pwdManager\backend\TestDB
+initing DataFile
+read the file
+initing DataFile
+read the file
+initing DataFile
+read the file
+initing DataFile
+read the file
+<File.DataFile.DataFile object at 0x0000021898A82B50>
+127.0.0.1 - - [28/May/2022 11:10:16] "POST /api/verify?uuid=Jm33xgn35rsYjEWv5yruve HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Auth\jwtAuth.py", line 56, in wrapper
+    ret = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Auth\RSA.py", line 45, in wrapper
+    ret = func(*args, **kwargs, modified_request_body=data)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Lib\flask_pydantic\core.py", line 220, in wrapper     
+    res = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\myapp.py", line 139, in login
+    decryptedDBs[current_db.uuid]['db'] = current_db
+KeyError: 'Jm33xgn35rsYjEWv5yruve'
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTYyOTk0MTYsImlhdCI6MTY1MzcwNzQxNiwiaXNzIjoicHdkTWFuYWdlciIsIm5iZiI6MTY1MzcwNzQxNiwianRpIjoiSklBU1hoc3lid2JES1dRUU9WNlFKWiJ9.sAmSlYBjk_HrMz20DtCTBrVKCpEHSGm-b4dd591Knlc
+127.0.0.1 - - [28/May/2022 11:10:16] "GET /api/collection/list HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Auth\jwtAuth.py", line 56, in wrapper
+    ret = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\myapp.py", line 159, in get_db
+    current_db:PwdDataBase = decryptedDBs.get(dbUUID, False)['db']
+TypeError: 'bool' object is not subscriptable
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTYyOTk0MTYsImlhdCI6MTY1MzcwNzQxNiwiaXNzIjoicHdkTWFuYWdlciIsIm5iZiI6MTY1MzcwNzQxNiwianRpIjoiSklBU1hoc3lid2JES1dRUU9WNlFKWiJ9.sAmSlYBjk_HrMz20DtCTBrVKCpEHSGm-b4dd591Knlc
+127.0.0.1 - - [28/May/2022 11:10:16] "GET /api/collection/info?collectionID=DAAGzt8e8qctreBJ5dHJfz HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Auth\jwtAuth.py", line 56, in wrapper
+    ret = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Lib\flask_pydantic\core.py", line 220, in wrapper     
+    res = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\myapp.py", line 183, in get_collection
+    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\sessions.py", line 79, in __getitem__
+    return super().__getitem__(key)
+KeyError: 'dbUUID'
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTYyOTk0MTYsImlhdCI6MTY1MzcwNzQxNiwiaXNzIjoicHdkTWFuYWdlciIsIm5iZiI6MTY1MzcwNzQxNiwianRpIjoiSklBU1hoc3lid2JES1dRUU9WNlFKWiJ9.sAmSlYBjk_HrMz20DtCTBrVKCpEHSGm-b4dd591Knlc
+127.0.0.1 - - [28/May/2022 11:10:16] "GET /api/pwd/info?detail=true&pwdUUID=aNpEXtnGqsqSnr7QgKtwzG&collectionUUID=DAAGzt8e8qctreBJ5dHJfz HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Auth\jwtAuth.py", line 56, in wrapper
+    ret = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Lib\flask_pydantic\core.py", line 220, in wrapper     
+    res = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\myapp.py", line 204, in get_pwd
+    current_db = decryptedDBs.get(session['dbUUID'], None)['db']
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\sessions.py", line 79, in __getitem__
+    return super().__getitem__(key)
+KeyError: 'dbUUID'
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTYyOTk0MTYsImlhdCI6MTY1MzcwNzQxNiwiaXNzIjoicHdkTWFuYWdlciIsIm5iZiI6MTY1MzcwNzQxNiwianRpIjoiSklBU1hoc3lid2JES1dRUU9WNlFKWiJ9.sAmSlYBjk_HrMz20DtCTBrVKCpEHSGm-b4dd591Knlc
+'dbUUID'
+127.0.0.1 - - [28/May/2022 11:10:16] "POST /api/pwd/create?uuid=DAAGzt8e8qctreBJ5dHJfz HTTP/1.1" 400 -
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTYyOTk0MTYsImlhdCI6MTY1MzcwNzQxNiwiaXNzIjoicHdkTWFuYWdlciIsIm5iZiI6MTY1MzcwNzQxNiwianRpIjoiSklBU1hoc3lid2JES1dRUU9WNlFKWiJ9.sAmSlYBjk_HrMz20DtCTBrVKCpEHSGm-b4dd591Knlc
+127.0.0.1 - - [28/May/2022 11:10:17] "POST /api/pwd/update?pwdID=aNpEXtnGqsqSnr7QgKtwzG&collectionID=DAAGzt8e8qctreBJ5dHJfz HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Auth\jwtAuth.py", line 56, in wrapper
+    ret = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Auth\RSA.py", line 45, in wrapper
+    ret = func(*args, **kwargs, modified_request_body=data)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Lib\flask_pydantic\core.py", line 220, in wrapper     
+    res = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\myapp.py", line 280, in update_pwd
+    current_db: PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\sessions.py", line 79, in __getitem__
+    return super().__getitem__(key)
+KeyError: 'dbUUID'
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTYyOTk0MTYsImlhdCI6MTY1MzcwNzQxNiwiaXNzIjoicHdkTWFuYWdlciIsIm5iZiI6MTY1MzcwNzQxNiwianRpIjoiSklBU1hoc3lid2JES1dRUU9WNlFKWiJ9.sAmSlYBjk_HrMz20DtCTBrVKCpEHSGm-b4dd591Knlc
+127.0.0.1 - - [28/May/2022 11:10:17] "GET /api/search?name=信 HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Auth\jwtAuth.py", line 56, in wrapper
+    ret = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Lib\flask_pydantic\core.py", line 220, in wrapper     
+    res = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\myapp.py", line 317, in search_pwd
+    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\sessions.py", line 79, in __getitem__
+    return super().__getitem__(key)
+KeyError: 'dbUUID'
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTYyOTk0MTYsImlhdCI6MTY1MzcwNzQxNiwiaXNzIjoicHdkTWFuYWdlciIsIm5iZiI6MTY1MzcwNzQxNiwianRpIjoiSklBU1hoc3lid2JES1dRUU9WNlFKWiJ9.sAmSlYBjk_HrMz20DtCTBrVKCpEHSGm-b4dd591Knlc
+127.0.0.1 - - [28/May/2022 11:10:17] "GET /api/pwd/info?detail=true&pwdUUID=bPAiQVZp3Pw5dinvNpZQ3y&collectionUUID=eytSoaxroK5Uc4dFkgK3TE HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Auth\jwtAuth.py", line 56, in wrapper
+    ret = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Lib\flask_pydantic\core.py", line 220, in wrapper     
+    res = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\myapp.py", line 204, in get_pwd
+    current_db = decryptedDBs.get(session['dbUUID'], None)['db']
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\sessions.py", line 79, in __getitem__
+    return super().__getitem__(key)
+KeyError: 'dbUUID'
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTYyOTk0MTYsImlhdCI6MTY1MzcwNzQxNiwiaXNzIjoicHdkTWFuYWdlciIsIm5iZiI6MTY1MzcwNzQxNiwianRpIjoiSklBU1hoc3lid2JES1dRUU9WNlFKWiJ9.sAmSlYBjk_HrMz20DtCTBrVKCpEHSGm-b4dd591Knlc
+127.0.0.1 - - [28/May/2022 11:10:17] "POST /api/collection/create HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Auth\jwtAuth.py", line 56, in wrapper
+    ret = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Lib\flask_pydantic\core.py", line 220, in wrapper     
+    res = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\myapp.py", line 332, in create_collection
+    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\sessions.py", line 79, in __getitem__
+    return super().__getitem__(key)
+KeyError: 'dbUUID'
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTYyOTk0MTYsImlhdCI6MTY1MzcwNzQxNiwiaXNzIjoicHdkTWFuYWdlciIsIm5iZiI6MTY1MzcwNzQxNiwianRpIjoiSklBU1hoc3lid2JES1dRUU9WNlFKWiJ9.sAmSlYBjk_HrMz20DtCTBrVKCpEHSGm-b4dd591Knlc
+127.0.0.1 - - [28/May/2022 11:10:17] "POST /api/database/create HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Auth\jwtAuth.py", line 56, in wrapper
+    ret = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Auth\RSA.py", line 45, in wrapper
+    ret = func(*args, **kwargs, modified_request_body=data)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\Lib\flask_pydantic\core.py", line 220, in wrapper     
+    res = func(*args, **kwargs)
+  File "F:\programme_design-dev\pwdManager\pwdManager\backend\myapp.py", line 353, in create_db
+    decryptedDBs[session['dbUUID']]['db'] = new_db
+  File "F:\programme_design-dev\env\Lib\site-packages\flask\sessions.py", line 79, in __getitem__
+    return super().__getitem__(key)
+KeyError: 'dbUUID'

@@ -10,12 +10,15 @@ from File.DataFile import DataFile
 from typing import List, Optional
 import time
 import os
+import logging
 
 app = Flask(__name__, static_url_path='/', static_folder='../gui')
 # CORS(app, supports_credentials=True, origins=['http://localhost:3000'], allow_headers=['Content-Type', 'Authentication', 'dbUUID'], expose_headers=['Authentication'])
 with open('config.json', 'r') as f:
     config = json.load(f)
 app.config['SECRET_KEY'] = config['backend']['session']['secret']
+
+# logging.basicConfig(filename='log.txt', level=logging.INFO)
 
 appPublicKey = config['backend']['RSA']['public']
 
@@ -59,7 +62,7 @@ def get_db_list():
     dbFolder = get_db_path()
     print(dbFolder)
     dbfiles = os.listdir(dbFolder)
-    db_list = [{"uuid":DataFile(os.path.join(dbFolder, dbfile) , update=True).getDigest()['uuid'], "name":dbfile.split('.')[0], "db": DataFile(os.path.join(dbFolder, dbfile), update=True)} for dbfile in dbfiles]
+    db_list = [{"uuid":DataFile(os.path.join(dbFolder, dbfile) , read=True).getDigest()['uuid'], "name":dbfile.split('.')[0], "db": DataFile(os.path.join(dbFolder, dbfile), read=True)} for dbfile in dbfiles]
     return db_list
 current_db:PwdDataBase = None
 # current_collection = collection_list[0]
@@ -73,6 +76,17 @@ decryptedDBs = {}
 #     SESSION_COOKIE_HTTPONLY=True,
 #     SESSION_COOKIE_SAMESITE='None',
 # )
+
+def save_current_db():
+    dbFolder = get_db_path()
+    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
+    currentdb_pwd = decryptedDBs.get(session['dbUUID'], None)['password']
+    name = current_db.name
+    dbPath = os.path.join(dbFolder, name+".pwdb")
+    
+    new_file = DataFile(dbPath,current_db, update=True)
+    # new_file.save(password.encode('utf-8'),'./TestDB/'+name,True)
+    new_file.save(currentdb_pwd.encode('utf-8'))
 
 class authData(BaseModel):
     sessionID: str
@@ -122,7 +136,7 @@ def login(query:queryModel,body:verifyModel):
             print(dbfile)
             # global current_db
             current_db = DataFile.load(dbfile.filePath, password.encode('utf-8'))
-            decryptedDBs[current_db.uuid] = current_db
+            decryptedDBs[current_db.uuid] = {'db':current_db,'password':password}
             session['dbUUID'] = current_db.uuid
             return {
                 "status": "success",
@@ -141,7 +155,7 @@ def login(query:queryModel,body:verifyModel):
 @useJWT
 def get_db():
     dbUUID = request.headers.get('dbUUID')
-    current_db:PwdDataBase = decryptedDBs.get(dbUUID, False)
+    current_db:PwdDataBase = decryptedDBs.get(dbUUID, False)['db']
     print('current_db',current_db)
     # if(current_db == None or current_db['uuid'] != dbUUID):
     if(not current_db):
@@ -165,9 +179,9 @@ class collectionModel(BaseModel):
 @validate()
 def get_collection(query:collectionModel):
     collectionID = query.collectionID
-    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)
-    print('dbs',decryptedDBs)
-    print('current_db',current_db)
+    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
+    # print('dbs',decryptedDBs)
+    # print('current_db',current_db)
     collection = current_db[collectionID]
     # global current_collection
     # current_collection = collection
@@ -186,7 +200,7 @@ class detailModel(BaseModel):
 def get_pwd(query:detailModel):
     colID = query.collectionUUID
     uuid = query.pwdUUID
-    current_db = decryptedDBs.get(session['dbUUID'], None)
+    current_db = decryptedDBs.get(session['dbUUID'], None)['db']
     pwd = current_db[colID][uuid]
 
     title = pwd['name']
@@ -223,7 +237,7 @@ def add_pwd(query:queryModel,body:pwdModel):
     try:
         timestamp = int(time.time())
         pwd = Pwd(body.password,body.title,**{'username':body.username,'url':body.url,'description':body.description,'updateDate':'','createTime':timestamp,'updateTime':timestamp,'updateHistory':[],'autoComplete':body.autoComplete,'matchRules':body.matchRules})
-        current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)
+        current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
         collection = current_db[query.uuid]
         collection.add(pwd)
         # for collection in collection_list:
@@ -262,7 +276,8 @@ class udtPwdModel(BaseModel):
 def update_pwd(query:udtModel, body:udtPwdModel):
     pwdID = query.pwdID
     collectionID = query.collectionID
-    current_db: PwdDataBase = decryptedDBs.get(session['dbUUID'], None)
+    current_db: PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
+    current_pwd = decryptedDBs.get(session['dbUUID'], None)['password']
     pwd = current_db[collectionID][pwdID]
 
     if body.title:
@@ -287,6 +302,7 @@ def update_pwd(query:udtModel, body:udtPwdModel):
         pwd.updateDate = body.updateDate
 
     pwd.updateTime= time.time()
+    save_current_db()
     return jsonify({"status":"success"})
 
 class searchpwdModel(BaseModel):
@@ -297,7 +313,7 @@ class searchpwdModel(BaseModel):
 @validate()
 def search_pwd(query:searchpwdModel):
     name = query.name
-    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)
+    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
     res = current_db.search(name)
     # data = [{'name': name, 'uuid': pwd.uuid} for collection in res for pwd in collection.pwdDict.values() if pwd.name == name]
     data = [{'name': pwd.name, 'uuid': pwd.uuid} for pwd in res]
@@ -312,9 +328,13 @@ class addCollectionModel(BaseModel):
 @useJWT
 @validate()
 def create_collection(body:addCollectionModel):
-    current_db = decryptedDBs.get(session['dbUUID'], None)
+    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
+    currentdb_pwd = decryptedDBs.get(session['dbUUID'], None)['password']
     newCol = PwdCollection(name=body.name)
     current_db.add(newCol)
+    # 保存到文件
+    # save_db(current_db, currentdb_pwd)
+    save_current_db()
     return jsonify({'status':'success','data':{'uuid':newCol.uuid,'name':body.name}})
 
 
@@ -330,6 +350,7 @@ class addDBModel(BaseModel):
 def create_db(body:addDBModel):
     name, password = body.name, body.password
     new_db = PwdDataBase([PwdCollection()],**{'name': name})
+    decryptedDBs[session['dbUUID']] = {'db': new_db, 'password': password}
     dbFolder = get_db_path()
     dbPath = os.path.join(dbFolder, name+".pwdb")
     if(os.path.exists(dbPath)):
@@ -350,7 +371,7 @@ class delPwdModel(BaseModel):
 @useJWT
 @validate()
 def del_pwd(query:delPwdModel):
-    current_db = decryptedDBs.get(session['dbUUID'], None)
+    current_db = decryptedDBs.get(session['dbUUID'], None)['db']
     collection = current_db[query.colID]
     collection.del_item(query.pwdID)
     return jsonify({'status':'success'})
@@ -363,7 +384,7 @@ class delColModel(BaseModel):
 @useJWT
 @validate()
 def del_col(query:delColModel):
-    current_db = decryptedDBs.get(session['dbUUID'], None)
+    current_db = decryptedDBs.get(session['dbUUID'], None)['db']
     current_db.del_item(query.colID)
     return jsonify({'status':'success'})
 

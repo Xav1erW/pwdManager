@@ -24,7 +24,7 @@ class DataFile:
         'uuid': '',     # 22 bytes
         'hash': ''      # 32 bytes
     }
-    def __init__(self, filePath:str, dataObj:PwdDataBase=None, update:bool=False):
+    def __init__(self, filePath:str, dataObj:PwdDataBase=None, update:bool=False, read:bool=True):
         """
         from the password data file load the data
 
@@ -35,16 +35,20 @@ class DataFile:
         self.filePath = filePath
         self.dataObj = dataObj
         print("initing DataFile")
-        if(os.path.exists(self.filePath) and not update):
-            raise FileExistsError('the file already exists')
+        if (read):
+            print('read the file')
+            self.file = open(self.filePath, 'rb+')
+        elif(update):
+            logger.info('update a file')
+            print('update a file')
+            self.file = open(self.filePath, 'wb+')
         elif(not os.path.exists(self.filePath)):
             logger.info('create a file')
             # print('create or update a file')
             self.file = open(self.filePath, 'wb+')
-        elif(update):
-            logger.info('update a file')
-            print('update a file')
-            self.file = open(self.filePath, 'r+b')
+        elif(os.path.exists(self.filePath) and ((not read) or (not update))):
+            raise FileExistsError('the file already exists')
+        
     
     @classmethod
     def load(self, filePath:str=None, key:bytes=None):
