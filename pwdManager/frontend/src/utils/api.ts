@@ -53,6 +53,12 @@ interface pwdUpdateResponse {
     data: pwdDetailsResponse
 }
 
+interface newDBInfo {
+    name: string,
+    uuid: string
+}
+interface newCollectionInfo extends newDBInfo {}
+
 const keys = generateKeys();
 const MyPublicKey = keys.publicKey;
 const MyPrivateKey = keys.privateKey;
@@ -243,6 +249,37 @@ export class Api {
 
     async searchPassword(keyword: string): Promise<pwdSearchResponse[]> {
         const response = await this.client.get(`search?name=${keyword}`)
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            throw new Error(response.status.toString())
+        }
+    }
+
+    async createNewDB(dbName: string, password: string): Promise<newDBInfo> {
+        const encryptedPassword = encrypt(password, this.serverPublicKey)
+        const response = await this.client.post(`database/create`, { name:dbName, password: encryptedPassword })
+        if (response.status === 200) {
+            return response.data.data
+        }
+        else {
+            throw new Error(response.status.toString())
+        }
+    }
+
+    async createNewCollection(collectionName: string): Promise<newCollectionInfo> {
+        const response = await this.client.post(`collection/create`, { name: collectionName })
+        if (response.status === 200) {
+            return response.data.data
+        }
+        else {
+            throw new Error(response.status.toString())
+        }
+    }
+
+    async updateCollection(collectionUUID: string, collectionName: string): Promise<any> {
+        const response = await this.client.post(`collection/update`, { collectionID: collectionUUID, name: collectionName })
         if (response.status === 200) {
             return response.data
         }
