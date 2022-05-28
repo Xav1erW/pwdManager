@@ -57,7 +57,10 @@ interface newDBInfo {
     name: string,
     uuid: string
 }
-interface newCollectionInfo extends newDBInfo {}
+interface newCollectionInfo{
+    status:string,
+    data:newDBInfo[]
+}
 
 const keys = generateKeys();
 const MyPublicKey = keys.publicKey;

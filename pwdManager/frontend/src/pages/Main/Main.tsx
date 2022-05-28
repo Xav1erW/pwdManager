@@ -366,12 +366,7 @@ export default function Main() {
                     let list = [...collectionList]
                     const newName = list.filter(item => item.uuid === uuid)[0].name
                     api.createNewCollection(newName).then((res)=>{
-                        list.forEach(item => {
-                            if (item.uuid === uuid) {
-                                item.name = res.name
-                                item.uuid = res.uuid
-                            }
-                        })
+                        setCollectionList([...res.data])
                     })
                 }
                 else{

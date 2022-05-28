@@ -103,7 +103,7 @@ class DataFile:
             contentBytes = file.read()
             hash = sha256(contentBytes)
             if(hash.digest() != head['hash']):
-                raise ValueError('the file hash is not valid, it may be damaged')
+                raise ValueError(f'the file hash is not valid, it may be damaged\n{hash.digest()}\n{head["hash"]}')
 
         # ------ decryption ------
         iv = head['uuid'][:16].encode('utf-8')
@@ -127,10 +127,13 @@ class DataFile:
             if(os.path.exists(self.filePath) and not update):
                 raise FileExistsError('the file already exists')
             print('opening file')
-            file = open(path, 'rb+')
+            file = open(path, 'wb+')
         else:
             print('use the current file')
+            if(self.file.closed):
+                self.file = open(self.filePath, 'wb+')
             file = self.file
+            file.seek(0)
         # =========== construct the header ===========
         head = self.HEAD.copy()
         head['uuid'] = self.dataObj.uuid

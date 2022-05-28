@@ -185,6 +185,8 @@ def get_collection(query:collectionModel):
     collection = current_db[collectionID]
     # global current_collection
     # current_collection = collection
+    if(collection.idList == []):
+        return jsonify({'data': []}), 200
     data = [{'uuid':uuid,'name':collection[uuid].name} for uuid in collection.idList ]
     return jsonify({'data':data})
 
@@ -289,7 +291,6 @@ def update_pwd(query:udtModel, body:udtPwdModel):
     pwdID = query.pwdID
     collectionID = query.collectionID
     current_db: PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
-    current_pwd = decryptedDBs.get(session['dbUUID'], None)['password']
     pwd = current_db[collectionID][pwdID]
 
     if body.title:
@@ -347,7 +348,8 @@ def create_collection(body:addCollectionModel):
     # 保存到文件
     # save_db(current_db, currentdb_pwd)
     save_current_db()
-    return jsonify({'status':'success','data':{'uuid':newCol.uuid,'name':body.name}})
+    data = [{'uuid':uuid,'name':current_db[uuid].name} for uuid in current_db.idList ]
+    return jsonify({'status':'success','data':data})
 
 
 class addDBModel(BaseModel):
