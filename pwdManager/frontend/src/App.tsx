@@ -48,9 +48,9 @@ interface dbInfoTyle {
     dbName: string,
 }
 
-export const ThemeContext = createContext({theme:'dark', toggleTheme: () => {}})
-function ThemeProvider ({ children, defaultTheme }:React.PropsWithChildren<{defaultTheme:string}> ) {
-    const [theme, setTheme] = useState(defaultTheme)
+export const ThemeContext = createContext({theme:'light', toggleTheme: () => {}})
+function ThemeProvider ({ children, defaultTheme }:React.PropsWithChildren<{defaultTheme?:string}> ) {
+    const [theme, setTheme] = useState(defaultTheme?defaultTheme:'light')
     const toggleTheme = () => {
         setTheme(theme === 'light' ? 'dark' : 'light')
     }
@@ -67,7 +67,6 @@ function App() {
     
     const [dbInfo, setDbInfo] = useState<dbInfoTyle>({ dbUUID: '', dbName: '' })
 
-    const [defaultTheme, setDefaultTheme] = useState('')
 
     useEffect(() => {
         const getData = async () => {
@@ -80,14 +79,10 @@ function App() {
         })
     }, [])
 
-    useEffect(()=>{
-        api.getDefaultConfig().then((data:any)=>{
-            setDefaultTheme(data.defaultTheme)
-        })
-    },[])
+    
     return (
         <div>
-            <ThemeProvider defaultTheme={defaultTheme}>
+            <ThemeProvider>
                 <AuthContext.Provider value={{ uuid, auth: auth, dbInfo: dbInfo, setDbInfo }}>
                     <BrowserRouter>
                         <Routes>

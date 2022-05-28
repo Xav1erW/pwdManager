@@ -422,7 +422,7 @@ def del_col(query:delColModel):
     return jsonify({'status':'success', 'collectionList':collectionList})
 
 @app.route('/api/config')
-@useJWT
+# @useJWT
 @validate()
 def get_config():
     return jsonify(config['frontend'])

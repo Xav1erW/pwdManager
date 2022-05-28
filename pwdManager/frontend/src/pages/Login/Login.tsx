@@ -24,6 +24,13 @@ export default function Login(props: any): JSX.Element {
             setFiles(data.data)
         })
     }, [])
+    useEffect(()=>{
+        api.getDefaultConfig().then((data:any)=>{
+            if(data !== themeContext.theme){
+                themeContext.toggleTheme()
+            }
+        })
+    },[])
 
     useEffect((): void => {
         console.log(selected)
