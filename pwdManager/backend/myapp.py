@@ -383,9 +383,10 @@ class delPwdModel(BaseModel):
 @useJWT
 @validate()
 def del_pwd(query:delPwdModel):
-    current_db = decryptedDBs.get(session['dbUUID'], None)['db']
+    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
     collection = current_db[query.colID]
     collection.del_item(query.pwdID)
+    save_current_db()
     return jsonify({'status':'success'})
 
 
@@ -396,8 +397,9 @@ class delColModel(BaseModel):
 @useJWT
 @validate()
 def del_col(query:delColModel):
-    current_db = decryptedDBs.get(session['dbUUID'], None)['db']
+    current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
     current_db.del_item(query.colID)
+    save_current_db()
     return jsonify({'status':'success'})
 
 
