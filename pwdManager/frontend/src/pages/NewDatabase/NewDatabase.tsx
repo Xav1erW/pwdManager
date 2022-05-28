@@ -28,23 +28,21 @@ export default function NewDatabase(props: any): JSX.Element {
         const legalPattern = /^[\u4e00-\u9fa5A-Za-z0-9]{1,}$/
         if (legalPattern.test(dbName)) {
             api.createNewDB(dbName, pwd).then((data: any) => {
-                if (data.status === 'success') {
-                    const { uuid, name } = data
-                    authContext.setDbInfo({ dbUUID: uuid, dbName: name })
-                    navigate('/home')
-                }
+                const { uuid, name } = data
+                authContext.setDbInfo({ dbUUID: uuid, dbName: name })
+                navigate('/home')
             })
         }
-        else{
+        else {
             alert('名称不合法')
         }
     }
 
-    const updatePwd = (e:React.ChangeEvent<HTMLInputElement>) => {
+    const updatePwd = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPwd(e.target.value)
     }
 
-    const updateDbName = (e:React.ChangeEvent<HTMLInputElement>) => {
+    const updateDbName = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newName = e.target.value
         setDbName(newName)
     }
@@ -80,10 +78,9 @@ export default function NewDatabase(props: any): JSX.Element {
                     <input type="password" className={styles.Input} onChange={updatePwd} />
                 </div>
                 {/* <span className={styles.loginBtn} onClick={decript}>解密文件</span> */}
-                <span className={styles.otherMethod}>其他解锁方式？</span>
                 <span className={styles.loginBtn} onClick={newDB}>CREATE</span>
             </div>
-            <span className={styles.changeTheme} onClick={()=>{themeContext.toggleTheme()}}>{themeContext.theme === 'light'?"🌙":"\u2600"}</span>
+            <span className={styles.changeTheme} onClick={() => { themeContext.toggleTheme() }}>{themeContext.theme === 'light' ? "🌙" : "\u2600"}</span>
         </div>
     )
 }
