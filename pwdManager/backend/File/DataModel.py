@@ -171,13 +171,16 @@ class PwdDataBase:
         '''
         search the pwd by name
         '''
-        # result = [self.pwdCollectionDict[colid] for colid in self.pwdCollectionIdList for pwd in self.pwdCollectionDict[colid].pwdDict.values() if pwd.name.find(name) != -1]
-        result = []
-        for colid in self.pwdCollectionIdList:
-            for pwd in self.pwdCollectionDict[colid].pwdDict.values():
-                print(pwd.name)
-                if(pwd.name.find(name) != -1):
-                    result.append(pwd)
+        if name == '':
+            return []
+        result = [(pwd, colid) for colid in self.pwdCollectionIdList for pwd in self.pwdCollectionDict[colid].pwdDict.values() if pwd.name.find(name) != -1]
+        # result = []
+        # for colid in self.pwdCollectionIdList:
+        #     for pwd in self.pwdCollectionDict[colid].pwdDict.values():
+        #         print(pwd.name)
+        #         if(pwd.name.find(name) != -1):
+        #             result.append(pwd)
+
         return result
     
     def del_item(self, uuid:str):

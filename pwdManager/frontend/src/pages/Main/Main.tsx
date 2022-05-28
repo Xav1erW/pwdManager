@@ -27,7 +27,7 @@ interface passwordItemTyle {
     uuid: string
 }
 
-interface pwdInfo {
+export interface pwdInfo {
     title: string,
     username: string,
     password: string,
@@ -36,7 +36,7 @@ interface pwdInfo {
     uuid?: string
 }
 
-interface pwdDetailsInfo {
+export interface pwdDetailsInfo {
     title: string,
     username: string,
     password: string,
@@ -62,7 +62,11 @@ function DetailPassword(props: { pwdInfo: pwdDetailsInfo, onEdit: (attrName: str
     const { onEdit, saveChange, closeDetail } = props
     const theme = useContext(ThemeContext)
     const [show, setShow] = useState(false)
-    const [date, setDate] = useState(new Date(updateDate))
+    let initDate:Date|null = new Date(updateDate)
+    if(updateDate === '') {
+        initDate = null
+    }
+    const [date, setDate] = useState(initDate)
     const Date2Str = (date: Date) => {
         // format: yyyy-MM-dd
         const year = date.getFullYear()
@@ -111,7 +115,7 @@ function DetailPassword(props: { pwdInfo: pwdDetailsInfo, onEdit: (attrName: str
             <div className={styles.detailInfo}>
                 <span>历史密码</span>
                 <div className={styles.historyPwd}>
-                    {updateHistory.map((item, index) => {
+                    {updateHistory==[]?null:updateHistory.map((item, index) => {
                         return <span key={index}>{item}</span>
                     })}
                 </div>
@@ -126,7 +130,7 @@ function DetailPassword(props: { pwdInfo: pwdDetailsInfo, onEdit: (attrName: str
 
 
 
-function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, delPassword: Function, colUUID: string, setShowGen: Function }) {
+export function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, delPassword: Function, colUUID: string, setShowGen: Function }) {
     const { title, username, password, url, description } = props.info
     // 显示密码生成器
     const [show, setShow] = useState(false)
@@ -145,7 +149,10 @@ function Password(props: { info: pwdInfo | pwdDetailsInfo, setInfo: Function, de
                 alert('请至少输入用户名和密码')
                 return
             }
-            api.createPassword(props.info, props.colUUID)
+            api.createPassword(props.info, props.colUUID).then((res)=>{
+                console.log(res)
+                props.setInfo({...props.info, res })
+            })
         }
         else if (props.info.uuid) {
             api.savePassword(props.info, props.colUUID, props.info.uuid)
@@ -362,7 +369,7 @@ export default function Main() {
                     </div>
                 </div>}
                 <div className={styles.contentDisplay}>
-                    {Object.keys(pwdInfo).length === 0 ? null : <div style={{ width: '80%' }}><Password info={pwdInfo} setInfo={setPwdInfo} delPassword={delPassword} colUUID={chosenCollection} setShowGen={setShowGren} /></div>}
+                    {Object.keys(pwdInfo).length === 0 ? null : <div style={{}}><Password info={pwdInfo} setInfo={setPwdInfo} delPassword={delPassword} colUUID={chosenCollection} setShowGen={setShowGren} /></div>}
                 </div>
             </div>
             <PwdGenerator show={showGren} setShow={setShowGren} setPwd={setGenPwd} />

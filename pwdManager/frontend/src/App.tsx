@@ -6,6 +6,7 @@ import Main from './pages/Main/Main'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import api from 'src/utils/api'
 import useProxy from './setupProxy'
+import SearchResult from './pages/SearchResult/SearchResult'
 const uuid = shortUUID.generate()
 
 // generate rsa key pair
@@ -83,6 +84,7 @@ function App() {
                         <Routes>
                             <Route path="/" element={<Login />} />
                             <Route path="/home" element={<Main />} />
+                            <Route path="/search" element={<SearchResult />} />
                         </Routes>
                     </BrowserRouter>
                 </AuthContext.Provider>
