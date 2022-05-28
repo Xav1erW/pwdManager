@@ -71,7 +71,7 @@ export default function Login(props: any): JSX.Element {
                     <input type="password" className={styles.passwordInput} ref={passwordInput} />
                 </div>
                 {/* <span className={styles.loginBtn} onClick={decript}>解密文件</span> */}
-                <span className={styles.otherMethod}>其他解锁方式？</span>
+                <span className={styles.otherMethod} onClick={()=>{navigate('/new')}}>创建新数据库？</span>
                 <span className={styles.loginBtn} onClick={decript}>ENTER</span>
             </div>
             <span className={styles.changeTheme} onClick={()=>{themeContext.toggleTheme()}}>{themeContext.theme === 'light'?"🌙":"\u2600"}</span>
