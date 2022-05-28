@@ -421,7 +421,11 @@ def del_col(query:delColModel):
     collectionList = [{'uuid':uuid,'name':current_db[uuid].name} for uuid in current_db.idList ]
     return jsonify({'status':'success', 'collectionList':collectionList})
 
-
+@app.route('/api/config')
+@useJWT
+@validate()
+def get_config():
+    return jsonify(config['frontend'])
 
 if __name__ == '__main__':
     app.run(port='5000',debug=True)

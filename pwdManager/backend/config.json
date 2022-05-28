@@ -13,6 +13,6 @@
         "dbFolder": "./TestDB"
     },
     "frontend":{
-        "defaultTheme": "light"
+        "defaultTheme": "dark"
     }
 }
