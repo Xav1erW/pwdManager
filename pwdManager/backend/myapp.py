@@ -236,8 +236,8 @@ class pwdModel(BaseModel):
 def add_pwd(query:queryModel,body:pwdModel):
     try:
         timestamp = int(time.time())
-        pwd = Pwd(body.password,body.title,**{'username':body.username,'url':body.url,'description':body.description,'updateDate':time.time(),'createTime':timestamp,'updateTime':timestamp,'updateHistory':[],'autoComplete':body.autoComplete,'matchRules':body.matchRules})
-        current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)
+        pwd = Pwd(body.password,body.title,**{'username':body.username,'url':body.url,'description':body.description,'updateDate':timestamp,'createTime':timestamp,'updateTime':timestamp,'updateHistory':[],'autoComplete':body.autoComplete,'matchRules':body.matchRules})
+        current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
         collection = current_db[query.uuid]
         collection.add(pwd)
         # for collection in collection_list:
@@ -260,10 +260,11 @@ def add_pwd(query:queryModel,body:pwdModel):
         autoComplete = pwd['autoComplete']
         updateHistory = [encodeWithRSA(his.encode('utf-8')) for his in pwd['updateHistory']]
         matchRules = pwd['matchRules']
+        save_current_db()
         return jsonify({'state':'success', 'data':{'title':title,'username':username,'password':password,'url':url,'description':description,'updateTime':updateTime,'createTime':createTime,'updateDate':updateDate,'updateHistory':updateHistory,'autoComplete':autoComplete,'matchRules':matchRules}})
     except Exception as e:
         print(e)
-        return jsonify({'msg':"illegal parameters"}), 400
+        return jsonify({'msg':e}), 400
 
 
 class udtModel(BaseModel):
@@ -366,7 +367,7 @@ def create_db(body:addDBModel):
     dbPath = os.path.join(dbFolder, name+".pwdb")
     if(os.path.exists(dbPath)):
         return jsonify({'status':'fail','msg':'db already exists'}), 400
-    new_file = DataFile(dbPath,new_db)
+    new_file = DataFile(dbPath,new_db, read=False)
     print('new_file',new_file)
     # new_file.save(password.encode('utf-8'),'./TestDB/'+name,True)
     new_file.save(password.encode('utf-8'))
