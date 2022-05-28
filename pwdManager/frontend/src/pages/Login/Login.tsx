@@ -26,7 +26,10 @@ export default function Login(props: any): JSX.Element {
     }, [])
     useEffect(()=>{
         api.getDefaultConfig().then((data:any)=>{
-            if(data !== themeContext.theme){
+            console.log('theme data')
+            console.log(data.defaultTheme)
+            console.log(themeContext.theme)
+            if(data.defaultTheme !== themeContext.theme){
                 themeContext.toggleTheme()
             }
         })

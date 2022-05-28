@@ -1,0 +1,137 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "F:/programme_design-dev/pwdManager/pwdManager/pwdManager.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": true
+  },
+  {
+   "optionDest": "console",
+   "value": false
+  },
+  {
+   "optionDest": "icon_file",
+   "value": "F:/programme_design-dev/pwdManager/pwdManager/frontend/public/favicon.ico"
+  },
+  {
+   "optionDest": "name",
+   "value": "PwdManager"
+  },
+  {
+   "optionDest": "ascii",
+   "value": false
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "embed_manifest",
+   "value": true
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "win_private_assemblies",
+   "value": false
+  },
+  {
+   "optionDest": "win_no_prefer_redirects",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/programme_design-dev/pwdManager/pwdManager/gui;gui/"
+  },
+  {
+   "optionDest": "excludes",
+   "value": "PyQt5"
+  },
+  {
+   "optionDest": "excludes",
+   "value": "PyQt5-Qt5"
+  },
+  {
+   "optionDest": "excludes",
+   "value": "PyQtWebEngine"
+  },
+  {
+   "optionDest": "excludes",
+   "value": "PyQtWebEngine-Qt5"
+  },
+  {
+   "optionDest": "excludes",
+   "value": "Eel"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "Lib"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "Auth"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "File"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "Lib.flash_pydantic"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "backend"
+  },
+  {
+   "optionDest": "pathex",
+   "value": "F:/programme_design-dev/pwdManager/pwdManager/backend"
+  },
+  {
+   "optionDest": "pathex",
+   "value": "F:/programme_design-dev/pwdManager/pwdManager/backend/Lib"
+  },
+  {
+   "optionDest": "pathex",
+   "value": "F:/programme_design-dev/pwdManager/pwdManager/backend/File"
+  },
+  {
+   "optionDest": "pathex",
+   "value": "F:/programme_design-dev/pwdManager/pwdManager/backend/Auth"
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}

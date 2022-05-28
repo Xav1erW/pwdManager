@@ -11,6 +11,7 @@ from typing import List, Optional
 import time
 import os
 import logging
+import sys
 
 app = Flask(__name__, static_url_path='/', static_folder='../gui')
 # CORS(app, supports_credentials=True, origins=['http://localhost:3000'], allow_headers=['Content-Type', 'Authentication', 'dbUUID'], expose_headers=['Authentication'])
@@ -55,7 +56,12 @@ FileList = [
 # 找密码文件也在TestDB下找
 # 读取的时候用os遍历目录，通过Digest读取uuid
 def get_db_path():
-    dbfolder = os.path.join(os.path.dirname(__file__), 'TestDB')
+    if getattr(sys, 'frozen', False):
+        application_path = os.path.dirname(sys.executable)
+    elif __file__:
+        application_path = os.path.dirname(__file__)
+
+    dbfolder = os.path.join(application_path, config['backend']['dbFolder'])
     return dbfolder
 
 def get_db_list():

@@ -4,3 +4,6 @@
 *_test*
 __pycache__
 node_modules
+*.zip
+/pwdManager/PwdManager/*
+/pwdManager/output
