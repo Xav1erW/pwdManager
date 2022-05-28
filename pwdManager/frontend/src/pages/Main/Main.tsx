@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react'
 
 import classNames from 'classnames/bind'
 import DatePicker, { DatePickerProps } from 'react-date-picker/dist/entry.nostyle'
+import PubSub from 'pubsub-js'
 import api from 'src/utils/api'
 import Topbar from 'src/Components/Topbar/Topbar'
 import PwdGenerator from 'src/Components/PwdGenerator/PwdGenerator'
@@ -277,6 +278,20 @@ export default function Main() {
         api.getCollectionList().then(res => {
             setCollectionList(res.collectionList)
         })
+    }, [])
+
+    const delCurrentCol = () => {
+        api.deleteCollection(chosenCollection).then(res => {
+            setCollectionList(res.collectionList)
+            setChosenCollection('')
+        })
+    }
+
+    useEffect(()=>{
+        const token = PubSub.subscribe('delCurrentCol', delCurrentCol)
+        return () => {
+            PubSub.unsubscribe(token)
+        }
     }, [])
 
     useEffect(() => {

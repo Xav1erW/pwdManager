@@ -250,6 +250,16 @@ export class Api {
         }
     }
 
+    async deleteCollection(collectionUUID: string): Promise<any> {
+        const response = await this.client.get(`collection/delete?colID=${collectionUUID}`)
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            throw new Error(response.status.toString())
+        }
+    }
+
     async searchPassword(keyword: string): Promise<pwdSearchResponse[]> {
         const response = await this.client.get(`search?name=${keyword}`)
         if (response.status === 200) {

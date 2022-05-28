@@ -5,6 +5,7 @@ import classNames from 'classnames/bind'
 import styles from './styles/Topbar.module.scss'
 import api from 'src/utils/api'
 import logo from './assets/logo512.png'
+import PubSub from 'pubsub-js'
 
 interface SearchResultType {
     name: string;
@@ -44,7 +45,10 @@ export default function Topbar() {
         navigate('/new')
     }
 
-    const delCurrentCol = (e:React.MouseEvent<HTMLSpanElement>) => {}
+    const delCurrentCol = (e:React.MouseEvent<HTMLSpanElement>) => {
+        e.stopPropagation()
+        PubSub.publish('delCurrentCol', 'del')
+    }
     return (
         <div className={topbar}>
             <div className={styles.options}>
