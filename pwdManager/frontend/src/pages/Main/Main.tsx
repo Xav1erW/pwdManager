@@ -116,7 +116,7 @@ function DetailPassword(props: { pwdInfo: pwdDetailsInfo, onEdit: (attrName: str
                 <span>历史密码</span>
                 <div className={styles.historyPwd}>
                     {updateHistory==[]?null:updateHistory.map((item, index) => {
-                        return <span key={index}>{item}</span>
+                        return <p key={index}>{item}</p>
                     })}
                 </div>
             </div>

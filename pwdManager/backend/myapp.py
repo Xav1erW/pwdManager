@@ -314,7 +314,7 @@ def update_pwd(query:udtModel, body:udtPwdModel):
     if body.updateDate:
         pwd.updateDate = body.updateDate
 
-    pwd.updateTime= time.time()
+    pwd.updateTime= int(time.time())
     save_current_db()
     return jsonify({"status":"success"})
 
@@ -338,7 +338,7 @@ class addCollectionModel(BaseModel):
 
 class updateCollectionModel(BaseModel):
     name: str
-    uuid: str
+    collectionID: str
 
 @app.route('/api/collection/create', methods=['POST'])
 @useJWT
@@ -360,12 +360,12 @@ def create_collection(body:addCollectionModel):
 @validate()
 def update_collection(body:updateCollectionModel):
     current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
-    current_db[body.uuid].name = body.name
+    current_db[body.collectionID].name = body.name
     # 保存到文件
     # save_db(current_db, currentdb_pwd)
     save_current_db()
     # data = [{'uuid':uuid,'name':current_db[uuid].name} for uuid in current_db.idList ]
-    return jsonify({'status':'success', 'data':{'uuid':body.uuid,'name':body.name}})
+    return jsonify({'status':'success', 'data':{'uuid':body.collectionID,'name':body.name}})
 
 
 class addDBModel(BaseModel):

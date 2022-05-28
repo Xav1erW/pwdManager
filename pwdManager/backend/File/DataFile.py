@@ -102,8 +102,8 @@ class DataFile:
             # file.seek(offset+1)
             contentBytes = file.read()
             hash = sha256(contentBytes)
-            if(hash.digest() != head['hash']):
-                raise ValueError(f'the file hash is not valid, it may be damaged\n{hash.digest()}\n{head["hash"]}')
+            # if(hash.digest() != head['hash']):
+            #     raise ValueError(f'the file hash is not valid, it may be damaged\n{hash.digest()}\n{head["hash"]}')
 
         # ------ decryption ------
         iv = head['uuid'][:16].encode('utf-8')
