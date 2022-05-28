@@ -315,8 +315,8 @@ export default function Main() {
     const addPwd = () => {
         const newPwdInfo: pwdDetailsInfo = {
             title: '新密码',
-            username: '',
-            password: '',
+            username: 'deafult',
+            password: 'default',
             url: '',
             description: '',
             updateDate: '',
@@ -325,9 +325,13 @@ export default function Main() {
             updateHistory: [],
             autoComplete: false,
             matchRules: [],
-            uuid: tempNewUUID.toString()
+            // uuid: tempNewUUID.toString()
         }
-        setPasswordList([...passwordList, { name: newPwdInfo.title, uuid: newPwdInfo.uuid as string }])
+        api.createPassword(newPwdInfo, chosenCollection).then(res => {
+            api.getPasswordList(chosenCollection).then(res => {
+                setPasswordList(res.passwordList)
+            })
+        })
         tempNewUUID -= 1
         setPwdInfo(newPwdInfo)
     }
@@ -366,11 +370,9 @@ export default function Main() {
                     let list = [...collectionList]
                     const newName = list.filter(item => item.uuid === uuid)[0].name
                     api.createNewCollection(newName).then((res)=>{
-                        list.forEach(item => {
-                            if (item.uuid === uuid) {
-                                item.name = res.name
-                                item.uuid = res.uuid
-                            }
+                        // setCollectionList([...res.data])
+                        api.getCollectionList().then(res => {
+                            setCollectionList(res.collectionList)
                         })
                     })
                 }
@@ -378,7 +380,9 @@ export default function Main() {
                     let list = [...collectionList]
                     const newName = list.filter(item => item.uuid === uuid)[0].name
                     api.updateCollection(uuid, newName).then((res)=>{
-                        console.log(res)
+                        api.getCollectionList().then(res => {
+                            setCollectionList(res.collectionList)
+                        })
                     })
                 }
             }
