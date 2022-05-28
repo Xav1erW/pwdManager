@@ -1,0 +1,19 @@
+FROM python:3.8.13-slim
+ARG user=pwd_manager
+RUN useradd --create-home --no-log-init --shell /bin/bash ${user} \
+    && adduser ${user} sudo \
+    && echo "${user}:1" | chpasswd
+
+ADD ./backend /home/${user}/backend
+ADD ./gui /home/${user}/gui
+
+VOLUME [ "/data", "/home/${user}/data" ]
+WORKDIR /home/${user}/backend
+# RUN apt update
+# RUN apt install gunicorn -y
+RUN python3 -m pip install --upgrade pip
+RUN pip3 install -r requirements.txt
+ENV PATH=/usr/local/bin/:$PATH
+EXPOSE 8001
+USER ${user}:root
+CMD [ "gunicorn", "myapp:app", "-b 0.0.0.0:8001" ]
