@@ -418,7 +418,8 @@ def del_col(query:delColModel):
     current_db:PwdDataBase = decryptedDBs.get(session['dbUUID'], None)['db']
     current_db.del_item(query.colID)
     save_current_db()
-    return jsonify({'status':'success'})
+    collectionList = [{'uuid':uuid,'name':current_db[uuid].name} for uuid in current_db.idList ]
+    return jsonify({'status':'success', 'collectionList':collectionList})
 
 
 
