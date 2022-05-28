@@ -4,6 +4,7 @@ import { ThemeContext } from 'src/App'
 import classNames from 'classnames/bind'
 import styles from './styles/Topbar.module.scss'
 import api from 'src/utils/api'
+import logo from './assets/logo512.png'
 
 interface SearchResultType {
     name: string;
@@ -32,14 +33,25 @@ export default function Topbar() {
             navigate(`/search?pwdID=${pwdID}&colID=${colID}`)
         }
     }
+
+    const reOpen = ()=>{
+        // reopen a database
+        navigate('/')
+    }
+
+    const newDB = ()=>{
+        // create a new database
+        navigate('/new')
+    }
+
+    const delCurrentCol = (e:React.MouseEvent<HTMLSpanElement>) => {}
     return (
         <div className={topbar}>
             <div className={styles.options}>
-                <span className={styles.option}>打开(O)</span>
-                <span className={styles.option}>新建(N)</span>
-                <span className={styles.option}>添加(A)</span>
-                <span className={styles.option}>删除(D)</span>
-                <span className={styles.option}>密码生成器(G)</span>
+                <img width={'32px'} height={'32px'} src={logo} alt="logo" />
+                <span className={styles.option} onClick={reOpen}>重新打开</span>
+                <span className={styles.option} onClick={newDB}>新建数据库</span>
+                <span className={styles.option} onClick={delCurrentCol}>删除当前合集</span>
             </div>
             <div className={styles.search}>
                 <input type="text" placeholder="搜索" value={search} onChange={handleSearch}/>

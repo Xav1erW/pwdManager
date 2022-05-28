@@ -14,6 +14,7 @@ export default function Login(props: any): JSX.Element {
     const [selected, setSelected] = useState("")
     const passwordInput = useRef<HTMLInputElement>(null)
     const navigate = useNavigate()
+    console.log(api)
     useEffect((): void => {
         const getData = async () => {
             const data = await api.getFileList()

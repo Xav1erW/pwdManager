@@ -100,6 +100,8 @@ export class Api {
         })
         const jwt = response.data['jwt']
         const publicKey = response.data["public_key"]
+        sessionStorage.setItem('jwt', jwt)
+        sessionStorage.setItem('publicKey', publicKey)
         this.client.defaults.headers.common['Authentication'] = jwt
         this.authToken = jwt
         console.log('jwt', this.client.defaults.headers.common['Authentication'])
@@ -120,7 +122,7 @@ export class Api {
         // console.log('auth', this.client.defaults.headers.common['Authentication'])
         const response = await this.client.post(`verify?uuid=${dbUUID}`, { password: encryptedPassword }, {
             headers: {
-                'Authentication': this.authToken
+                // 'Authentication': this.authToken
             }
         })
         if (response.status === 200) {
@@ -129,6 +131,7 @@ export class Api {
             this.client.defaults.headers.common['dbUUID'] = dbUUID
             return response.data
         } else {
+            alert(response.data['msg'])
             throw new Error(response.data['msg'])
         }
     }
@@ -253,6 +256,14 @@ export class Api {
     }
     setServerPublicKey(serverPublicKey: string) {
         this.serverPublicKey = serverPublicKey
+    }
+    noAuthSolution() {
+        if(sessionStorage.getItem('jwt') !== null){
+            this.authToken = sessionStorage.getItem('jwt') as string
+            this.client.defaults.headers.common['Authentication'] = this.authToken
+            this.setServerPublicKey(sessionStorage.getItem('publicKey') as string)
+            return
+        }
     }
 }
 
