@@ -301,6 +301,16 @@ export class Api {
         }
     }
 
+    async getDefaultConfig(): Promise<any> {
+        const response = await this.client.get(`config`)
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            throw new Error(response.status.toString())
+        }
+    }
+
     setPrivateKey(privateKey: string) {
         this.privateKey = privateKey
     }
