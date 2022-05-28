@@ -63,8 +63,9 @@ function DetailPassword(props: { pwdInfo: pwdDetailsInfo, onEdit: (attrName: str
     const { onEdit, saveChange, closeDetail } = props
     const theme = useContext(ThemeContext)
     const [show, setShow] = useState(false)
-    let initDate:Date|null = new Date(updateDate)
+    let initDate:Date|null = new Date(parseInt(updateDate))
     if(updateDate === '') {
+        console.log('null date')
         initDate = null
     }
     const [date, setDate] = useState(initDate)
@@ -280,16 +281,17 @@ export default function Main() {
         })
     }, [])
 
-    const delCurrentCol = () => {
-        api.deleteCollection(chosenCollection).then(res => {
-            setCollectionList(res.collectionList)
-            setChosenCollection('')
-        })
-    }
+    useEffect(()=>{
+        PubSub.publish('chosenCollection', chosenCollection)
+    }, [chosenCollection])
 
     useEffect(()=>{
-        const token = PubSub.subscribe('delCurrentCol', delCurrentCol)
-        return () => {
+        const token = PubSub.subscribe('reloadCollections', ()=>{
+            api.getCollectionList().then(res => {
+                setCollectionList(res.collectionList)
+            })
+        })
+        return ()=>{
             PubSub.unsubscribe(token)
         }
     }, [])

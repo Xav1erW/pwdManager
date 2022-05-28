@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ThemeContext } from 'src/App'
 import classNames from 'classnames/bind'
@@ -18,6 +18,7 @@ export default function Topbar() {
     const [search, setSearch] = useState('')
     const [searchList, setSearchList] = useState<SearchResultType[]>([] as SearchResultType[])
     const MyClassName = classNames.bind(styles)
+    const [chosenCollection, setChosenCollection] = useState('')
     const navigate = useNavigate()
     const topbar = MyClassName({
         topbar: true,
@@ -29,25 +30,33 @@ export default function Topbar() {
         setSearchList(res)
     }
 
-    const jumpTo = (pwdID: string, colID: string):React.MouseEventHandler<HTMLSpanElement> => {
+    const jumpTo = (pwdID: string, colID: string): React.MouseEventHandler<HTMLSpanElement> => {
         return (e: React.MouseEvent<HTMLSpanElement>): void => {
             navigate(`/search?pwdID=${pwdID}&colID=${colID}`)
         }
     }
 
-    const reOpen = ()=>{
+    const reOpen = () => {
         // reopen a database
         navigate('/')
     }
 
-    const newDB = ()=>{
+    const newDB = () => {
         // create a new database
         navigate('/new')
     }
 
-    const delCurrentCol = (e:React.MouseEvent<HTMLSpanElement>) => {
+    useEffect(() => {
+        const token = PubSub.subscribe('chosenCollection', (msg ,data) => { console.log(msg, data); setChosenCollection(data) })
+        return () => { PubSub.unsubscribe(token) }
+    }, [])
+
+    const delCurrentCol = (e: React.MouseEvent<HTMLSpanElement>) => {
         e.stopPropagation()
-        PubSub.publish('delCurrentCol', 'del')
+        console.log(chosenCollection)
+        api.deleteCollection(chosenCollection).then(res => {
+            PubSub.publish('reloadCollections', 'reload')
+        })
     }
     return (
         <div className={topbar}>
@@ -58,14 +67,14 @@ export default function Topbar() {
                 <span className={styles.option} onClick={delCurrentCol}>删除当前合集</span>
             </div>
             <div className={styles.search}>
-                <input type="text" placeholder="搜索" value={search} onChange={handleSearch}/>
+                <input type="text" placeholder="搜索" value={search} onChange={handleSearch} />
                 <div className={styles.searchList}>
-                    {searchList.length!==0?searchList.map((item: SearchResultType) => (
+                    {searchList.length !== 0 ? searchList.map((item: SearchResultType) => (
                         <span key={item.pwdID} onClick={jumpTo(item.pwdID, item.colID)}>{item.name}</span>
-                    )):null}
+                    )) : null}
                 </div>
             </div>
-            <span className={styles.changeTheme} onClick={()=>{theme.toggleTheme()}}>{theme.theme === 'light'?"🌙":"\u2600"}</span>
+            <span className={styles.changeTheme} onClick={() => { theme.toggleTheme() }}>{theme.theme === 'light' ? "🌙" : "\u2600"}</span>
         </div>
     )
 }

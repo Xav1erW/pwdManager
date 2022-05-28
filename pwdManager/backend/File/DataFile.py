@@ -37,7 +37,7 @@ class DataFile:
         print("initing DataFile")
         if (read):
             print('read the file')
-            self.file = open(self.filePath, 'rb+')
+            self.file = open(self.filePath, 'rb')
         elif(update):
             logger.info('update a file')
             print('update a file')

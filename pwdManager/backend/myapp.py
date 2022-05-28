@@ -84,7 +84,7 @@ def save_current_db():
     name = current_db.name
     dbPath = os.path.join(dbFolder, name+".pwdb")
     
-    new_file = DataFile(dbPath,current_db, update=True)
+    new_file = DataFile(dbPath,current_db, update=True, read=False)
     # new_file.save(password.encode('utf-8'),'./TestDB/'+name,True)
     new_file.save(currentdb_pwd.encode('utf-8'))
 
@@ -263,7 +263,7 @@ def add_pwd(query:queryModel,body:pwdModel):
         updateHistory = [encodeWithRSA(his.encode('utf-8')) for his in pwd['updateHistory']]
         matchRules = pwd['matchRules']
         save_current_db()
-        return jsonify({'state':'success', 'data':{'title':title,'username':username,'password':password,'url':url,'description':description,'updateTime':updateTime,'createTime':createTime,'updateDate':updateDate,'updateHistory':updateHistory,'autoComplete':autoComplete,'matchRules':matchRules}})
+        return jsonify({'state':'success', 'data':{'title':title,'username':username,'password':password,'url':url,'description':description,'updateTime':updateTime,'createTime':createTime,'updateDate':'','updateHistory':updateHistory,'autoComplete':autoComplete,'matchRules':matchRules}})
     except Exception as e:
         print(e)
         return jsonify({'msg':e}), 400

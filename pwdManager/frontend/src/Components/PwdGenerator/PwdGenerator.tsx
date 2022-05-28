@@ -71,7 +71,7 @@ export default function PwdGenerator(props: any) {
                     <div className={styles.option}>
                         <span>长度：</span>
                         <div className={styles.optInput}>
-                            <input type={'text'} value={pwdLength} onChange={(e) => {
+                            <input type={'number'} value={pwdLength} onChange={(e) => {
                                 setPwdLength(parseInt(e.target.value))
                             }} />
                         </div>
