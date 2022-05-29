@@ -94,6 +94,14 @@ def save_current_db():
     # new_file.save(password.encode('utf-8'),'./TestDB/'+name,True)
     new_file.save(currentdb_pwd.encode('utf-8'))
 
+@app.before_request
+def before_request():
+    allowedIP:list = config['backend'].get('AllowOrigin', [])
+    if(allowedIP.count(request.remote_addr) == 0):
+        return jsonify({"error":"Access Denied"}), 401
+    else:
+        return
+
 
 @app.route('/', methods=['GET'])
 def index():

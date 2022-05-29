@@ -11,7 +11,13 @@ import datetime
 from flask import request, session
 import logging
 from functools import wraps
-with open('config.json', 'r') as f:
+import sys, os
+if getattr(sys, 'frozen', False):
+    application_path = os.path.dirname(sys.executable)
+elif __file__:
+    application_path = os.path.dirname(__file__)
+configPath = os.path.join(application_path, 'config.json')
+with open(configPath, 'r') as f:
     config = json.load(f)
 
 print(config)

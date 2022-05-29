@@ -10,7 +10,8 @@
         "session": {
             "secret": "Ti(:/)Z75?#as)Mz6Ns9-bcI/.c7Ng"
         },
-        "dbFolder": "./TestDB"
+        "dbFolder": "./TestDB",
+        "AllowOrigin": ["127.0.0.1"]
     },
     "frontend":{
         "defaultTheme": "dark"

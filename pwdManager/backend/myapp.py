@@ -15,7 +15,12 @@ import sys
 
 app = Flask(__name__, static_url_path='/', static_folder='../gui')
 # CORS(app, supports_credentials=True, origins=['http://localhost:3000'], allow_headers=['Content-Type', 'Authentication', 'dbUUID'], expose_headers=['Authentication'])
-with open('config.json', 'r') as f:
+if getattr(sys, 'frozen', False):
+    application_path = os.path.dirname(sys.executable)
+elif __file__:
+    application_path = os.path.dirname(__file__)
+configPath = os.path.join(application_path, 'config.json')
+with open(configPath, 'r') as f:
     config = json.load(f)
 app.config['SECRET_KEY'] = config['backend']['session']['secret']
 
@@ -93,6 +98,14 @@ def save_current_db():
     new_file = DataFile(dbPath,current_db, update=True, read=False)
     # new_file.save(password.encode('utf-8'),'./TestDB/'+name,True)
     new_file.save(currentdb_pwd.encode('utf-8'))
+
+@app.before_request
+def before_request():
+    allowedIP:list = config['backend'].get('AllowOrigin', [])
+    if(allowedIP.count(request.remote_addr) == 0):
+        return jsonify({"error":"Access Denied"}), 401
+    else:
+        return
 
 class authData(BaseModel):
     sessionID: str
